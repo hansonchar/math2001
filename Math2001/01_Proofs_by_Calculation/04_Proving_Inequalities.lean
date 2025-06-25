@@ -83,6 +83,17 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
   [Zulip discussion](https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/.E2.9C.94.20Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/with/525445003).
 -/
 
+-- Example 1.4.6 take 2 using `extra`:
+example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
+  calc
+    -- n ^ 2  > n ^ 2 - 4 := by extra -- <= failed but why?
+    n ^ 2 = n * n := by ring
+    _ ≥ 5 * n := by rel [hn]
+    _ = 2 * n + 3 * n := by ring
+    _ ≥ 2 * n + 3 * 5 := by rel [hn]
+    _ = 2 * n + 11 + 4 := by ring
+    _ > 2 * n + 11 := by extra
+
 -- Example 1.4.7
 example {m n : ℤ} (h : m ^ 2 + n ≤ 2) : n ≤ 2 :=
   calc
