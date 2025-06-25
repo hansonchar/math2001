@@ -77,8 +77,7 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
     _ > 2 * n + 11 := by norm_num
 
 /-
-  Kyle Miller:
-  > Yes, using a more powerful tactic can do that, however: the book never uses `norm_num`. The only real mention of it is in the very last chapter, [Transitioning to mainstream](https://hrmacbeth.github.io/math2001/Mainstream_Lean.html) Lean. You shouldn't consider `norm_num` to be a solution here.
+  Kyle Miller: Yes, using a more powerful tactic can do that, however: the book never uses `norm_num`. The only real mention of it is in the very last chapter, [Transitioning to mainstream](https://hrmacbeth.github.io/math2001/Mainstream_Lean.html) Lean. You shouldn't consider `norm_num` to be a solution here.
 
   [Zulip discussion](https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/.E2.9C.94.20Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/with/525445003).
 -/
@@ -93,6 +92,14 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
     _ ≥ 2 * n + 3 * 5 := by rel [hn]
     _ = 2 * n + 11 + 4 := by ring
     _ > 2 * n + 11 := by extra
+
+/-
+  Kenny Lau: probably because they aren't "differing by some neutral quantity", try making the LHS n^2-0 first to a mathematician n^2 and n^2-0 are obviously the same, but not to a computer
+-/
+
+-- This works:
+-- n ^ 2 = n ^ 2 - 0 := by ring
+-- _  > n ^ 2 - 4 := by extra
 
 -- Example 1.4.7
 example {m n : ℤ} (h : m ^ 2 + n ≤ 2) : n ≤ 2 :=
