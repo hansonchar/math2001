@@ -41,6 +41,7 @@ example {r s : ℚ} (h1 : s + 3 ≥ r) (h2 : s + r ≤ 3) : r ≤ 3 := by
     _ ≤ (3 - s + (3 + s)) / 2 := by rel [h3, h4] -- justify with one tactic
     _ = 3 := by ring -- justify with one tactic
 
+-- 2.1.4. Example
 example {t : ℝ} (h1 : t ^ 2 = 3 * t) (h2 : t ≥ 1) : t ≥ 2 := by
   have h3 :=
   calc t * t = t ^ 2 := by ring
@@ -48,7 +49,7 @@ example {t : ℝ} (h1 : t ^ 2 = 3 * t) (h2 : t ≥ 1) : t ≥ 2 := by
   cancel t at h3
   addarith [h3]
 
-
+-- 2.1.5. Example
 example {a b : ℝ} (h1 : a ^ 2 = b ^ 2 + 1) (h2 : a ≥ 0) : a ≥ 1 := by
   have h3 :=
   calc
@@ -57,15 +58,48 @@ example {a b : ℝ} (h1 : a ^ 2 = b ^ 2 + 1) (h2 : a ≥ 0) : a ≥ 1 := by
     _ = 1 ^ 2 := by ring
   cancel 2 at h3
 
-
+-- 2.1.6. Example
 example {x y : ℤ} (hx : x + 3 ≤ 2) (hy : y + 2 * x ≥ 3) : y > 3 := by
-  sorry
+  have h3 : x ≤ -1 := by addarith [hx]        -- addaridth is so handy!
+  have h4 : y ≥ 3 - 2 * x := by addarith [hy]
+  calc
+    y ≥ 3 - 2 * x := by rel [h4]
+    _ ≥ 3 - 2 * -1 := by rel [h3]
+    _ > 3 := by numbers
 
+-- 2.1.7. Example
+-- Initial attempt before reading the details.
 example (a b : ℝ) (h1 : -b ≤ a) (h2 : a ≤ b) : a ^ 2 ≤ b ^ 2 := by
-  sorry
+  have h3 : b + a ≥ 0 := by addarith [h1]
+  have h4 : b - a ≥ 0 := by addarith [h2]
+  have h5 : b^2 - a^2 ≥ 0 := by
+    calc
+      b ^ 2 - a ^ 2 = (b + a) * (b - a) := by ring
+      _ ≥ 0 * 0 := by rel [h3, h4]
+      _ = 0 := by numbers
+  calc
+    a^2 ≤ b^2 := by addarith [h5]
 
+/-!
+  Retrospect: The key was to make use of the fact that $(b+a)(b-a)=b^2-a^2$.
+-/
+
+-- Second attempt after reading the [details](https://hrmacbeth.github.io/math2001/02_Proofs_with_Structure.html#prove-sq-le-sq).
+example (a b : ℝ) (h1 : -b ≤ a) (h2 : a ≤ b) : a ^ 2 ≤ b ^ 2 := by
+  have h3 : b + a ≥ 0 := by addarith [h1]
+  have h4 : b - a ≥ 0 := by addarith [h2]
+  calc
+    a ^ 2 ≤ a ^ 2 + (b + a) * (b - a) := by extra -- courtesy of the power of Lean, we don't
+    _ = b ^ 2 := by ring -- need to even explicilty refer to h3 and h4 (even though they have to be present)!
+
+-- [2.1.8. Example](https://hrmacbeth.github.io/math2001/02_Proofs_with_Structure.html#cube-inequality)
+-- Assuming the given information is correct, all we need to do is to figure out the
+-- intermediare step, i.e, h1, and let lean do the rest!
 example (a b : ℝ) (h : a ≤ b) : a ^ 3 ≤ b ^ 3 := by
-  sorry
+  have h1 : 0 ≤ b - a := by addarith [h]
+  calc
+    a^3 ≤ a ^ 3 + ((b - a) * ((b - a) ^ 2 + 3 * (b + a) ^ 2)) / 4 := by extra
+    _ = b^3 := by ring
 
 /-! # Exercises -/
 
