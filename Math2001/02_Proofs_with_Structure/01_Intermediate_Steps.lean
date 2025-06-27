@@ -4,7 +4,7 @@ import Library.Basic
 
 math2001_init
 
-
+-- 2.1.1. Example
 example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 := by
   have hb : b = 1 := by addarith [h2]
   calc
@@ -12,7 +12,7 @@ example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 := by
     _ = 4 + 5 * 1 := by rw [h1, hb]
     _ = 9 := by ring
 
-
+-- 2.1.2. Example
 example {m n : ℤ} (h1 : m + 3 ≤ 2 * n - 1) (h2 : n ≤ 5) : m ≤ 6 := by
   have h3 :=
   calc
@@ -21,14 +21,25 @@ example {m n : ℤ} (h1 : m + 3 ≤ 2 * n - 1) (h2 : n ≤ 5) : m ≤ 6 := by
     _ = 9 := by numbers
   addarith [h3]
 
+/-!
+  This also works, and arguably a more consistent style (having the additional `by`):
+-/
+example {m n : ℤ} (h1 : m + 3 ≤ 2 * n - 1) (h2 : n ≤ 5) : m ≤ 6 := by
+  have h3 := by
+    calc
+      m + 3 ≤ 2 * n - 1 := by rel [h1]
+      _ ≤ 2 * 5 - 1 := by rel [h2]
+      _ = 9 := by numbers
+  addarith [h3]
 
+-- 2.1.3. Example
 example {r s : ℚ} (h1 : s + 3 ≥ r) (h2 : s + r ≤ 3) : r ≤ 3 := by
-  have h3 : r ≤ 3 + s := by sorry -- justify with one tactic
-  have h4 : r ≤ 3 - s := by sorry -- justify with one tactic
+  have h3 : r ≤ 3 + s := by addarith [h1] -- justify with one tactic
+  have h4 : r ≤ 3 - s := by addarith [h2] -- justify with one tactic
   calc
-    r = (r + r) / 2 := by sorry -- justify with one tactic
-    _ ≤ (3 - s + (3 + s)) / 2 := by sorry -- justify with one tactic
-    _ = 3 := by sorry -- justify with one tactic
+    r = (r + r) / 2 := by ring -- justify with one tactic
+    _ ≤ (3 - s + (3 + s)) / 2 := by rel [h3, h4] -- justify with one tactic
+    _ = 3 := by ring -- justify with one tactic
 
 example {t : ℝ} (h1 : t ^ 2 = 3 * t) (h2 : t ≥ 1) : t ≥ 2 := by
   have h3 :=
