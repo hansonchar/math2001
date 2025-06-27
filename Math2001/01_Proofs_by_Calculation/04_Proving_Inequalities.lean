@@ -77,7 +77,10 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
     _ > 2 * n + 11 := by norm_num
 
 /-
-  Kyle Miller: Yes, using a more powerful tactic can do that, however: the book never uses `norm_num`. The only real mention of it is in the very last chapter, [Transitioning to mainstream](https://hrmacbeth.github.io/math2001/Mainstream_Lean.html) Lean. You shouldn't consider `norm_num` to be a solution here.
+  Kyle Miller: Yes, using a more powerful tactic can do that, however: the book never uses
+  `norm_num`. The only real mention of it is in the very last chapter,
+  [Transitioning to mainstream](https://hrmacbeth.github.io/math2001/Mainstream_Lean.html) Lean.
+  You shouldn't consider `norm_num` to be a solution here.
 
   [Zulip discussion](https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/.E2.9C.94.20Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/with/525445003).
 -/
@@ -85,7 +88,7 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
 -- Example 1.4.6 take 2 using `extra`:
 example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
   calc
-    -- n ^ 2  > n ^ 2 - 4 := by extra -- <= failed but why?
+    -- n ^ 2 > n ^ 2 - 4 := by extra -- <= failed but why?
     n ^ 2 = n * n := by ring
     _ ≥ 5 * n := by rel [hn]
     _ = 2 * n + 3 * n := by ring
@@ -94,12 +97,18 @@ example {n : ℤ} (hn : n ≥ 5) : n ^ 2 > 2 * n + 11 :=
     _ > 2 * n + 11 := by extra
 
 /-
-  Kenny Lau: probably because they aren't "differing by some neutral quantity", try making the LHS n^2-0 first to a mathematician n^2 and n^2-0 are obviously the same, but not to a computer
+  Kenny Lau: probably because they aren't "differing by some neutral quantity",
+  try making the LHS n^2-0 first to a mathematician n^2 and n^2-0 are obviously the same,
+  but not to a computer
 -/
 
 -- This works:
 -- n ^ 2 = n ^ 2 - 0 := by ring
 -- _  > n ^ 2 - 4 := by extra
+
+-- This would also work:
+-- n ^ 2 = n ^ 2 + 0 := by ring
+-- _ ≥ 0 := by extra
 
 -- Example 1.4.7
 example {m n : ℤ} (h : m ^ 2 + n ≤ 2) : n ≤ 2 :=
@@ -147,22 +156,70 @@ up in Lean. -/
 
 
 example {x y : ℤ} (h1 : x + 3 ≥ 2 * y) (h2 : 1 ≤ y) : x ≥ -1 :=
-  sorry
+  calc
+    x = x + 3 - 3 := by ring
+    _ ≥ 2 * y - 3 := by rel [h1]
+    _ ≥ 2 * 1 - 3 := by rel [h2]
+    _ ≥ -1 := by numbers
 
 example {a b : ℚ} (h1 : 3 ≤ a) (h2 : a + 2 * b ≥ 4) : a + b ≥ 3 :=
-  sorry
+  calc
+    a + b = a + (a + 2 * b - a) / 2 := by ring  -- (1)
+    _ ≥ a + (4 - a) / 2 := by rel [h2]
+    _ = (4 + a) / 2 := by ring
+    _ ≥ (4 + 3) / 2 := by rel [h1]              -- (4)
+    _ = 3 + 1 / 2 := by ring
+    _ ≥ 3 := by extra
+
+/-!
+  Remarks:
+  * `a ≥ 3` means `a` can be easily converted from to a constant so that's not a problem.
+  * We somehow need to have the term `a + 2 * b`, so that led us to the formation of (1).
+  * Once we get to (4), we need to massage it into something we can make use of `extra`.
+-/
 
 example {x : ℤ} (hx : x ≥ 9) : x ^ 3 - 8 * x ^ 2 + 2 * x ≥ 3 :=
-  sorry
+  calc
+    x ^ 3 - 8 * x ^ 2 + 2 * x = x ^ 2 * (x - 8) + 2 * x := by ring -- this is the key step
+    _ ≥ 9 ^ 2 * (9 - 8) + 2 * 9 := by rel [hx]
+    _ ≥ 3 := by numbers
+
+/-!
+  Remark: The hypothesis `hx` has `x` in the first degree, and it's much easier to reason
+  about the inequality by factoring out the square.
+-/
 
 example {n : ℤ} (hn : n ≥ 10) : n ^ 4 - 2 * n ^ 2 > 3 * n ^ 3 :=
-  sorry
+  calc
+    n ^ 4 - 2 * n ^ 2 = n ^ 2 * (n * n - 2) := by ring  -- (1)
+    _ ≥ n ^ 2 * (10 * n - 2) := by rel [hn]
+    _ = n ^ 2 * (3 * n + 7 * n - 2) := by ring
+    _ ≥ n ^ 2 * (3 * n + 7 * 10 - 2) := by rel [hn]     -- (2)
+    _ = 3 * n ^ 3 + n ^ 2 * 68 := by ring
+    _ ≥ 3 * n ^ 3 + 10 ^ 2 * 68 := by rel [hn]          -- (3)
+    _ > 3 * n ^ 3 := by extra
+
+/-!
+  Remark. The key is to factor out $n^2$ as (1), and then massage $n^2 - 2$ into the form of
+  $a * n + b$ for some constants $a, b$ as in (2).
+  From there we want to arrive at the form of $3 * n^3 + c$ for some constant $c$, as in (3),
+  and we are all set.
+-/
 
 example {n : ℤ} (h1 : n ≥ 5) : n ^ 2 - 2 * n + 3 > 14 :=
-  sorry
+  calc
+    n ^ 2 - 2 * n + 3 = n * n - 2 * n + 3 := by ring
+    _ ≥ 5 * n - 2 * n + 3 := by rel [h1]
+    _ = 3 * n + 3 := by ring
+    _ ≥ 3 * 5 + 3 := by rel [h1]
+    _ > 14 := by numbers
 
 example {x : ℚ} : x ^ 2 - 2 * x ≥ -1 :=
-  sorry
+  calc
+    x ^ 2 - 2 * x = (x - 1) ^ 2 - 1 := by ring
+    _ ≥ - 1 := by extra
 
 example (a b : ℝ) : a ^ 2 + b ^ 2 ≥ 2 * a * b :=
-  sorry
+  calc
+    a ^ 2 + b ^ 2 = (a - b) ^ 2 + 2 * a * b := by ring
+    _ ≥ 2 * a * b := by extra
