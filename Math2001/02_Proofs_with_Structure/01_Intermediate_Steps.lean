@@ -4,6 +4,12 @@ import Library.Basic
 
 math2001_init
 
+/-!
+  # 2. Proofs with structure
+
+  ## 2.1. Intermediate steps
+-/
+
 -- 2.1.1. Example
 example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 := by
   have hb : b = 1 := by addarith [h2]
@@ -101,14 +107,55 @@ example (a b : ℝ) (h : a ≤ b) : a ^ 3 ≤ b ^ 3 := by
     a^3 ≤ a ^ 3 + ((b - a) * ((b - a) ^ 2 + 3 * (b + a) ^ 2)) / 4 := by extra
     _ = b^3 := by ring
 
-/-! # Exercises -/
+/-! # Exercises 2.1.9. -/
 
-
+/-!
+  Suggested steps: Prove that $x(x+2)=2(x+2)$, then cancel to deduce that $x=2$.
+-/
 example {x : ℚ} (h1 : x ^ 2 = 4) (h2 : 1 < x) : x = 2 := by
-  sorry
+  have h3 : x * (x + 2) = 2 * (x + 2) := by
+    calc
+      x * (x + 2) = x^2 + 2 * x := by ring
+      _ = 4 + 2 * x := by rw [h1]
+      _ = 2 * (x + 2) := by ring
+  cancel (x + 2) at h3
 
+/-!
+  Suggested steps: Prove that $(n-2)^2=0$, cancel the square to deduce that $(n-2)=0$,
+  then finish off.
+-/
 example {n : ℤ} (hn : n ^ 2 + 4 = 4 * n) : n = 2 := by
-  sorry
+  have h1 : (n - 2) ^ 2 = 0 := by
+    calc
+      (n - 2) ^ 2 = n ^ 2 + 4 - 4 * n := by ring
+      _ = 4 * n - 4 * n := by rw [hn]
+      _ = 0 := by ring
+  have h2 : (n - 2) = 0 := by cancel 2 at h1
+  calc
+    n = n - 2 + 2 := by ring
+    _ = 0 + 2 := by rw [h2]
+    _ = 2 := by numbers
 
+/-!
+  Suggested steps: Prove that $0 < xy$, cancel $x$ to deduce that $0 < y$,
+  then give a calculation to prove the goal.
+-/
 example (x y : ℚ) (h : x * y = 1) (h2 : x ≥ 1) : y ≤ 1 := by
-  sorry
+  have h3 : 0 < x * y := by addarith [h]
+  have h4 : 0 < y := by cancel x at h3
+  have h5 : y ≥ y ^ 2 := by
+    calc
+      y = y * 1 := by ring
+      _ = y * (x * y) := by rw [h]
+      _ = y ^ 2 * x := by ring
+      _ ≥ y^2 * 1 := by rel [h2]
+      _ = y^2 := by ring
+  have h6 : y - y ^ 2 ≥ 0 := by addarith [h5]
+  have h7 : y * (1 - y) ≥ 0 := by
+    calc
+      y * (1 - y) = y - y^2 := by ring
+      _ ≥ 0 := by rel [h6]
+  have h8 : 1 - y ≥ 0 := by cancel y at h7
+  addarith [h8]
+
+-- Remark: seems a bit messy. Is there a simpler way?
