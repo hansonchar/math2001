@@ -61,10 +61,11 @@ example {x : ℝ} (hx : 2 * x + 1 = 5) : x = 1 ∨ x = 2 := by
   Also split the goal into cases and prove each case.
 -/
 example {x : ℝ} (hx : x ^ 2 - 3 * x + 2 = 0) : x = 1 ∨ x = 2 := by
+  -- Note the interesting construction of `h1` without explicitly saying what it is upfront!
   have h1 :=
     calc
-    (x - 1) * (x - 2) = x ^ 2 - 3 * x + 2 := by ring
-    _ = 0 := by rw [hx] -- h1: (x - 1) * (x - 2) = 0
+      (x - 1) * (x - 2) = x ^ 2 - 3 * x + 2 := by ring
+      _ = 0 := by rw [hx] -- h1: (x - 1) * (x - 2) = 0
   have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1 -- h2: (x - 1 = 0) ∨ (x - 2 = 0)
   obtain h3 | h3 := h2  -- split h2 into two cases, h3: x - 1 = 0
                         --                          h3: x - 2 = 0
@@ -139,7 +140,13 @@ example {x : ℚ} (h : x = 4 ∨ x = -4) : x ^ 2 + 1 = 17 := by
 
 -- Exercise 2.3.6.2
 example {x : ℝ} (h : x = 1 ∨ x = 2) : x ^ 2 - 3 * x + 2 = 0 := by
-  sorry
+  obtain h | h := h
+  calc
+    x ^ 2 - 3 * x + 2 = 1 ^ 2 - 3 * 1 + 2 := by rw [h]
+    _ = 0 := by numbers
+  calc
+    x ^ 2 - 3 * x + 2 = 2 ^ 2 - 3 * 2 + 2 := by rw [h]
+    _ = 0 := by numbers
 
 example {t : ℚ} (h : t = -2 ∨ t = 3) : t ^ 2 - t - 6 = 0 := by
   sorry
