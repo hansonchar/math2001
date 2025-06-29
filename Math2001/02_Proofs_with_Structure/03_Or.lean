@@ -125,12 +125,19 @@ example {n : ℤ} : n ^ 2 ≠ 2 := by
         _ ≤ n ^ 2 := by rel [hn]
 
 
-/-! # Exercises -/
+/-! ### 2.3.6. Exercises -/
 
-
+-- Exercise 2.3.6.1
 example {x : ℚ} (h : x = 4 ∨ x = -4) : x ^ 2 + 1 = 17 := by
-  sorry
+  obtain h1 | h1 := h -- Split h into cases. Then prove each case.
+  calc
+    x ^ 2 + 1 = 4 ^ 2 + 1 := by rw [h1]
+    _ = 17 := by numbers
+  calc
+    x ^ 2 + 1 = (-4) ^ 2 + 1 := by rw [h1]
+    _ = 17 := by numbers
 
+-- Exercise 2.3.6.2
 example {x : ℝ} (h : x = 1 ∨ x = 2) : x ^ 2 - 3 * x + 2 = 0 := by
   sorry
 
