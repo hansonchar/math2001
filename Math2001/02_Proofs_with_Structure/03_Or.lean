@@ -256,7 +256,18 @@ example {t : ℝ} (ht : t ^ 3 = t ^ 2) : t = 1 ∨ t = 0 := by
 
 -- Exercise 2.3.6.11
 example {n : ℕ} : n ^ 2 ≠ 7 := by
-  sorry
+  have hn := le_or_succ_le n 2  -- hn: n ≤ 2 ∨ 3 ≤ n
+  obtain hn | hn := hn
+                    -- hn: n ≤ 2
+  . apply ne_of_lt  --   ⊢ n ^ 2 < 7
+    calc
+      n ^ 2 ≤ 2 ^ 2 := by rel [hn]
+      _ < 7 := by numbers
+                    -- hn: 3 ≤ n
+  . apply ne_of_gt  --   ⊢ 7 < n ^ 2
+    calc
+      7 < 3 ^ 2 := by numbers
+      _ ≤ n ^ 2 := by rel [hn]
 
 -- Exercise 2.3.6.12
 example {x : ℤ} : 2 * x ≠ 3 := by
