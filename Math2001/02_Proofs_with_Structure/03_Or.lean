@@ -57,14 +57,28 @@ example {x : ℝ} (hx : 2 * x + 1 = 5) : x = 1 ∨ x = 2 := by
 
 /-!
   ### 2.3.4. Example
+
+  This example involes creating a hypothesis with an "or", so it can be split into cases.
+  Also split the goal into cases and prove each case.
 -/
 example {x : ℝ} (hx : x ^ 2 - 3 * x + 2 = 0) : x = 1 ∨ x = 2 := by
   have h1 :=
     calc
     (x - 1) * (x - 2) = x ^ 2 - 3 * x + 2 := by ring
-    _ = 0 := by rw [hx]
-  have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1
-  sorry
+    _ = 0 := by rw [hx] -- h1: (x - 1) * (x - 2) = 0
+  have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1 -- h2: (x - 1 = 0) ∨ (x - 2 = 0)
+  obtain h3 | h3 := h2  -- split h2 into two cases, h3: x - 1 = 0
+                        --                          h3: x - 2 = 0
+  left  -- select the left goal to prove: x = 1
+  calc
+    x = x - 1 + 1 := by ring
+    _ = 0 + 1 := by rw [h3]
+    _ = 1 := by numbers
+  right
+  calc  -- select the right goal to prove: x = 2
+    x = x - 2 + 2 := by ring
+    _ = 0 + 2 := by rw [h3]
+    _ = 2 := by numbers
 
 example {n : ℤ} : n ^ 2 ≠ 2 := by
   have hn0 := le_or_succ_le n 0
