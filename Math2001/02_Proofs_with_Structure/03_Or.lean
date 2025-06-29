@@ -174,14 +174,27 @@ example {x y : ℝ} (h : x = 2 ∨ y = -2) : x * y + 2 * x = 2 * y + 4 := by
       _ = 0 := by ring
       _ = 2 * y + 4 := by rw [← h1]
 
+-- Exercise 2.3.6.5
 example {s t : ℚ} (h : s = 3 - t) : s + t = 3 ∨ s + t = 5 := by
-  sorry
+  left
+  calc
+    s + t = 3 - t + t := by rw [h]
+    _ = 3 := by ring
 
+-- Exercise 2.3.6.6
 example {a b : ℚ} (h : a + 2 * b < 0) : b < a / 2 ∨ b < - a / 2 := by
-  sorry
+  right
+  calc
+    b < -a / 2 := by addarith [h]
 
+-- Exercise 2.3.6.7
 example {x y : ℝ} (h : y = 2 * x + 1) : x < y / 2 ∨ x > y / 2 := by
-  sorry
+  left
+  calc
+    x = y / 2 - 1 / 2 := by addarith [h]
+    _ < y / 2 - 0 := by extra -- Interestingly this explicit step is necessary.
+    _ = y / 2 := by ring
+
 
 example {x : ℝ} (hx : x ^ 2 + 2 * x - 3 = 0) : x = -3 ∨ x = 1 := by
   sorry
