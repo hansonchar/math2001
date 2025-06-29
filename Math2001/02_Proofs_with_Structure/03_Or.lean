@@ -148,8 +148,15 @@ example {x : ℝ} (h : x = 1 ∨ x = 2) : x ^ 2 - 3 * x + 2 = 0 := by
     x ^ 2 - 3 * x + 2 = 2 ^ 2 - 3 * 2 + 2 := by rw [h]
     _ = 0 := by numbers
 
+-- Exercise 2.3.6.3
 example {t : ℚ} (h : t = -2 ∨ t = 3) : t ^ 2 - t - 6 = 0 := by
-  sorry
+  obtain h | h := h
+  calc
+    t ^ 2 - t - 6 = (-2) ^ 2 - (-2) - 6 := by rw [h]
+    _ = 0 := by numbers
+  calc
+    t ^ 2 - t - 6 = (3) ^ 2 - (3) - 6 := by rw [h]
+    _ = 0 := by numbers
 
 example {x y : ℝ} (h : x = 2 ∨ y = -2) : x * y + 2 * x = 2 * y + 4 := by
   sorry
