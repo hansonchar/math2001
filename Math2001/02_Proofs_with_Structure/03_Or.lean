@@ -158,8 +158,21 @@ example {t : ℚ} (h : t = -2 ∨ t = 3) : t ^ 2 - t - 6 = 0 := by
     t ^ 2 - t - 6 = (3) ^ 2 - (3) - 6 := by rw [h]
     _ = 0 := by numbers
 
+-- Exercise 2.3.6.4
+-- The second case is cute in how `h1` is constructed.
+-- I think the use of `.` makes the proof more readable.
 example {x y : ℝ} (h : x = 2 ∨ y = -2) : x * y + 2 * x = 2 * y + 4 := by
-  sorry
+  obtain h | h := h
+  . calc
+    x * y + 2 * x = 2 * y + 2 * 2 := by rw [h]
+    _ = 2 * y + 4 := by ring
+  . have h1 := calc
+        2 * y + 4 = 2 * (-2) + 4 := by rw [h]
+        _ = 0 := by numbers
+    calc
+      x * y + 2 * x = x * (-2) + 2 * x := by rw [h]
+      _ = 0 := by ring
+      _ = 2 * y + 4 := by rw [← h1]
 
 example {s t : ℚ} (h : s = 3 - t) : s + t = 3 ∨ s + t = 5 := by
   sorry
