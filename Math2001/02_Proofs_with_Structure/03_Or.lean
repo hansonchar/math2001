@@ -45,6 +45,9 @@ example {n : ℕ} : n ^ 2 ≠ 2 := by
     _ ≤ n * n := by rel [hn]
     _ = n ^ 2 := by ring
 
+/-!
+  ### 2.3.3. Example
+-/
 example {x : ℝ} (hx : 2 * x + 1 = 5) : x = 1 ∨ x = 2 := by
   right
   calc
@@ -52,7 +55,9 @@ example {x : ℝ} (hx : 2 * x + 1 = 5) : x = 1 ∨ x = 2 := by
     _ = (5 - 1) / 2 := by rw [hx]
     _ = 2 := by numbers
 
-
+/-!
+  ### 2.3.4. Example
+-/
 example {x : ℝ} (hx : x ^ 2 - 3 * x + 2 = 0) : x = 1 ∨ x = 2 := by
   have h1 :=
     calc
