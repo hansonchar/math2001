@@ -271,7 +271,18 @@ example {n : ℕ} : n ^ 2 ≠ 7 := by
 
 -- Exercise 2.3.6.12
 example {x : ℤ} : 2 * x ≠ 3 := by
-  sorry
+  have hx := le_or_succ_le x 1  -- hx: x ≤ 1 ∨ 2 ≤ x
+  obtain hx | hx := hx
+                    -- hx: x ≤ 1
+  . apply ne_of_lt  --   ⊢ 2 * x < 3
+    calc
+      2 * x ≤ 2 * 1 := by rel [hx]
+      _ < 3 := by numbers
+                    -- hx: 2 ≤ x
+  . apply ne_of_gt  --   ⊢ 3 < 2 * x
+    calc
+      3 < 2 * 2 := by numbers
+      _ ≤ 2 * x := by rel [hx]
 
 -- Exercise 2.3.6.13
 example {t : ℤ} : 5 * t ≠ 18 := by
