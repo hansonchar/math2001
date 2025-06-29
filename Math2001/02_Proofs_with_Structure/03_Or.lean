@@ -236,17 +236,36 @@ example {a b : ℝ} (hab : a ^ 2 + 2 * b ^ 2 = 3 * a * b) : a = b ∨ a = 2 * b 
       _ = 0 + 2 * b := by rw [h2]
       _ = 2 * b := by ring
 
+-- Exercise 2.3.6.10
 example {t : ℝ} (ht : t ^ 3 = t ^ 2) : t = 1 ∨ t = 0 := by
-  sorry
+  have h1 := calc -- h1: t ^ 2 * (t - 1) = 0
+    t ^ 2 * (t - 1) = t ^ 3 - t ^ 2 := by ring
+    _ = t ^ 2 - t ^ 2 := by rw [ht]
+    _ = 0 := by ring
+  have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1 -- h2: t ^ 2 = 0 ∨ t - 1 = 0
+  obtain h2 | h2 := h2
+          -- h2: t ^ 2 = 0
+  . right -- ⊢ t = 0
+    cancel 2 at h2
+          -- h2: t - 1 = 0
+  . left  -- ⊢ t = 1
+    calc
+      t = t - 1 + 1 := by ring
+      _ = 0 + 1 := by rw [h2]
+      _ = 1 := by numbers
 
+-- Exercise 2.3.6.11
 example {n : ℕ} : n ^ 2 ≠ 7 := by
   sorry
 
+-- Exercise 2.3.6.12
 example {x : ℤ} : 2 * x ≠ 3 := by
   sorry
 
+-- Exercise 2.3.6.13
 example {t : ℤ} : 5 * t ≠ 18 := by
   sorry
 
+-- Exercise 2.3.6.14
 example {m : ℕ} : m ^ 2 + 4 * m ≠ 46 := by
   sorry
