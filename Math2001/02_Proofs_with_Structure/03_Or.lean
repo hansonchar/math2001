@@ -4,6 +4,11 @@ import Library.Basic
 
 math2001_init
 
+/-!
+  ## 2.3. “Or” and proof by cases
+
+  ### 2.3.1. Example
+-/
 
 example {x y : ℝ} (h : x = 1 ∨ y = -1) : x * y + x = y + 1 := by
   obtain hx | hy := h
@@ -15,14 +20,30 @@ example {x y : ℝ} (h : x = 1 ∨ y = -1) : x * y + x = y + 1 := by
     _ = -1 + 1 := by ring
     _ = y + 1 := by rw [hy]
 
+/-!
+  ### 2.3.2. Example
+
+  Let be any natural number. Show that $n^2 ≠ 2$.
+
+  In general, a natual number $n$ is either ≤ to one natural number (such as 1),
+  or it’s ≥ the next one (such as 2).
+-/
 example {n : ℕ} : n ^ 2 ≠ 2 := by
-  have hn := le_or_succ_le n 1
-  obtain hn | hn := hn
-  apply ne_of_lt
+  -- Introduce the hypothesis: n ≤ 1 ∨ 2 ≤ n.
+  have hn := le_or_succ_le n 1  -- We have not previously invoked lemmas in this way.
+  -- Split the hypothesis into two cases.
+  obtain hn | hn := hn          -- `obtain` is also new.
+  apply ne_of_lt                -- Tackle the first case, namely, hn: n ≤ 1.
   calc
     n ^ 2 ≤ 1 ^ 2 := by rel [hn]
     _ < 2 := by numbers
-  sorry
+  apply ne_of_gt                -- Tackle the second case, namely, hn : 2 ≤ n.
+  calc
+    2 ≤ n := by rel [hn]  -- we want $2n$ to appear on the right, so we can invoke `rel [hn]`
+    _ < n + n := by extra
+    _ = 2 * n := by ring
+    _ ≤ n * n := by rel [hn]
+    _ = n ^ 2 := by ring
 
 example {x : ℝ} (hx : 2 * x + 1 = 5) : x = 1 ∨ x = 2 := by
   right
