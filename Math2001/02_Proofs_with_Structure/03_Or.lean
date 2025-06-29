@@ -215,8 +215,26 @@ example {x : ℝ} (hx : x ^ 2 + 2 * x - 3 = 0) : x = -3 ∨ x = 1 := by
       _ = 0 - 3 := by rw [h2]
       _ = -3 := by numbers
 
+-- Exercise 2.3.6.9
 example {a b : ℝ} (hab : a ^ 2 + 2 * b ^ 2 = 3 * a * b) : a = b ∨ a = 2 * b := by
-  sorry
+  have h1 := calc -- h1: (a - b) * (a - 2 * b) = 0
+    (a - b) * (a - 2 * b) = a ^ 2 + 2 * b ^ 2 - 3 * a * b := by ring
+    _ = 3 * a * b - 3 * a * b := by rw [hab]
+    _ = 0 := by ring
+  have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1 -- h2: a - b = 0 ∨ a - 2 * b = 0
+  obtain h2 | h2 := h2
+          -- h2: a - b = 0
+  . left  -- ⊢ a = b
+    calc
+      a = a - b + b := by ring
+      _ = 0 + b := by rw [h2]
+      _ = b := by ring
+          -- h2: a - 2 * b = 0
+  . right -- ⊢ a = 2 * b
+    calc
+      a = a - 2 * b + 2 * b := by ring
+      _ = 0 + 2 * b := by rw [h2]
+      _ = 2 * b := by ring
 
 example {t : ℝ} (ht : t ^ 3 = t ^ 2) : t = 1 ∨ t = 0 := by
   sorry
