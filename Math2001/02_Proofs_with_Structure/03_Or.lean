@@ -286,7 +286,7 @@ example {x : ℤ} : 2 * x ≠ 3 := by
 
 -- Exercise 2.3.6.13
 example {t : ℤ} : 5 * t ≠ 18 := by
-  have ht := le_or_succ_le t 3  -- ht: x ≤ 3 ∨ 4 ≤ x
+  have ht := le_or_succ_le t 3  -- ht: t ≤ 3 ∨ 4 ≤ t
   obtain ht | ht := ht
                     -- ht: t ≤ 3
   . apply ne_of_lt  --   ⊢ 5 * t < 18
@@ -301,4 +301,15 @@ example {t : ℤ} : 5 * t ≠ 18 := by
 
 -- Exercise 2.3.6.14
 example {m : ℕ} : m ^ 2 + 4 * m ≠ 46 := by
-  sorry
+  have hm := le_or_succ_le m 5  -- hm: m ≤ 5 ∨ 6 ≤ m
+  obtain hm | hm := hm
+                    -- hm: m ≤ 5
+  . apply ne_of_lt  --   ⊢ m ^ 2 + 4 * m < 46
+    calc
+      m ^ 2 + 4 * m ≤ 5 ^ 2 + 4 * 5 := by rel [hm]
+      _ < 46 := by numbers
+                    -- hm: 6 ≤ m
+  . apply ne_of_gt  --   ⊢ 46 < m ^ 2 + 4 * m
+    calc
+      46 < 6 ^ 2 + 4 * 6 := by numbers
+      _ ≤ m ^ 2 + 4 * m := by rel [hm]
