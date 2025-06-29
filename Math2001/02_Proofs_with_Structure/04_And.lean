@@ -4,6 +4,11 @@ import Library.Basic
 
 math2001_init
 
+/-!
+  ## 2.4. “And”
+
+  ### 2.4.1. Example
+-/
 
 example {x y : ℤ} (h : 2 * x - y = 4 ∧ y - x + 1 = 2) : x = 5 := by
   obtain ⟨h1, h2⟩ := h
