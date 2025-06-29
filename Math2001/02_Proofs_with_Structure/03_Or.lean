@@ -195,9 +195,25 @@ example {x y : ℝ} (h : y = 2 * x + 1) : x < y / 2 ∨ x > y / 2 := by
     _ < y / 2 - 0 := by extra -- Interestingly this explicit step is necessary.
     _ = y / 2 := by ring
 
-
+-- Exercise 2.3.6.8
 example {x : ℝ} (hx : x ^ 2 + 2 * x - 3 = 0) : x = -3 ∨ x = 1 := by
-  sorry
+  have h1 := calc -- h1: (x - 1) * (x + 3) = 0
+    (x - 1) * (x + 3) = x ^ 2 + 2 * x - 3 := by ring
+    _ = 0 := by rw [hx]
+  have h2 := eq_zero_or_eq_zero_of_mul_eq_zero h1 -- h2: x - 1 = 0 ∨ x + 3 = 0
+  obtain h2 | h2 := h2
+          -- h2: x - 1 = 0
+  . right -- ⊢ x = 1
+    calc
+      x = x - 1 + 1 := by ring
+      _ = 0 + 1 := by rw [h2]
+      _ = 1 := by numbers
+          -- h2: x + 3 = 0
+  . left  -- ⊢ x = -3
+    calc
+      x = x + 3 - 3 := by ring
+      _ = 0 - 3 := by rw [h2]
+      _ = -3 := by numbers
 
 example {a b : ℝ} (hab : a ^ 2 + 2 * b ^ 2 = 3 * a * b) : a = b ∨ a = 2 * b := by
   sorry
