@@ -31,19 +31,18 @@ example {x y : ℝ} (h : x = 1 ∨ y = -1) : x * y + x = y + 1 := by
 example {n : ℕ} : n ^ 2 ≠ 2 := by
   -- Introduce the hypothesis: n ≤ 1 ∨ 2 ≤ n.
   have hn := le_or_succ_le n 1  -- We have not previously invoked lemmas in this way.
-  -- Split the hypothesis into two cases.
-  obtain hn | hn := hn          -- `obtain` is also new.
-  apply ne_of_lt                -- Tackle the first case, namely, hn: n ≤ 1.
-  calc
-    n ^ 2 ≤ 1 ^ 2 := by rel [hn]
-    _ < 2 := by numbers
-  apply ne_of_gt                -- Tackle the second case, namely, hn : 2 ≤ n.
-  calc
-    2 ≤ n := by rel [hn]  -- we want $2n$ to appear on the right, so we can invoke `rel [hn]`
-    _ < n + n := by extra
-    _ = 2 * n := by ring
-    _ ≤ n * n := by rel [hn]
-    _ = n ^ 2 := by ring
+  obtain hn | hn := hn          -- `obtain` is also new. It splits a hypothesis into cases.
+  . apply ne_of_lt                -- Tackle the first case, namely, hn: n ≤ 1.
+    calc
+      n ^ 2 ≤ 1 ^ 2 := by rel [hn]
+      _ < 2 := by numbers
+  . apply ne_of_gt                -- Tackle the second case, namely, hn : 2 ≤ n.
+    calc
+      2 ≤ n := by rel [hn]  -- we want $2n$ to appear on the right, so we can invoke `rel [hn]`
+      _ < n + n := by extra
+      _ = 2 * n := by ring
+      _ ≤ n * n := by rel [hn]
+      _ = n ^ 2 := by ring
 
 /-!
   ### 2.3.3. Example
@@ -80,6 +79,16 @@ example {x : ℝ} (hx : x ^ 2 - 3 * x + 2 = 0) : x = 1 ∨ x = 2 := by
     _ = 0 + 2 := by rw [h3]
     _ = 2 := by numbers
 
+/-!
+  ### 2.3.5. Example
+
+  In Example 2.3.2 we showed that no natural number squares to 2.
+  It is also true that no integer squares to 2, but since order laws are more complicated when
+  negative numbers are involved, the proof is more complicated, requiring cases within cases.
+
+  When a proof becomes this complicated, you may find it helpful to mark the start of each
+  new sub-proof with the symbol ·, as follows.
+-/
 example {n : ℤ} : n ^ 2 ≠ 2 := by
   have hn0 := le_or_succ_le n 0
   obtain hn0 | hn0 := hn0
