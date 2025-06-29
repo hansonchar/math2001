@@ -87,31 +87,39 @@ example {x : ℝ} (hx : x ^ 2 - 3 * x + 2 = 0) : x = 1 ∨ x = 2 := by
   negative numbers are involved, the proof is more complicated, requiring cases within cases.
 
   When a proof becomes this complicated, you may find it helpful to mark the start of each
-  new sub-proof with the symbol ·, as follows.
+  new sub-proof with the symbol `·`, as follows.
 -/
 example {n : ℤ} : n ^ 2 ≠ 2 := by
-  have hn0 := le_or_succ_le n 0
+  have hn0 := le_or_succ_le n 0         --  hn0: n ≤ 0 ∨ 1 ≤ n
   obtain hn0 | hn0 := hn0
-  · have : 0 ≤ -n := by addarith [hn0]
-    have hn := le_or_succ_le (-n) 1
+                                        --  hn0: n ≤ 0
+  · have : 0 ≤ -n := by addarith [hn0]  -- this: 0 ≤ -n
+    have hn := le_or_succ_le (-n) 1     --   hn: -n ≤ 1 ∨ 2 ≤ -n
     obtain hn | hn := hn
-    · apply ne_of_lt
+                                        -- hn: -n ≤ 1
+    · apply ne_of_lt                    -- ⊢ n ^ 2 < 2
       calc
         n ^ 2 = (-n) ^ 2 := by ring
         _ ≤ 1 ^ 2 := by rel [hn]
         _ < 2 := by numbers
-    · apply ne_of_gt
+                                        -- hn: 2 ≤ -n
+    · apply ne_of_gt                    -- ⊢ 2 < n ^ 2
       calc
         (2:ℤ) < 2 ^ 2 := by numbers
+        -- This also seems to work. So why (2:ℤ) ?
+        -- 2 < 2 ^ 2 := by numbers
         _ ≤ (-n) ^ 2 := by rel [hn]
         _ = n ^ 2 := by ring
-  · have hn := le_or_succ_le n 1
+                                      -- hn0: 1 ≤ n
+  · have hn := le_or_succ_le n 1      --  hn: n ≤ 1 ∨ 2 ≤ n
     obtain hn | hn := hn
-    · apply ne_of_lt
+                                      --  hn: n ≤ 1
+    · apply ne_of_lt                  -- ⊢ n ^ 2 < 2
       calc
         n ^ 2 ≤ 1 ^ 2 := by rel [hn]
         _ < 2 := by numbers
-    · apply ne_of_gt
+                                      --  hn: 2 ≤ n
+    · apply ne_of_gt                  -- 2 < n ^ 2
       calc
         (2:ℤ) < 2 ^ 2 := by numbers
         _ ≤ n ^ 2 := by rel [hn]
