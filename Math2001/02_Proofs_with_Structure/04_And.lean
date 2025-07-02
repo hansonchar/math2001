@@ -148,11 +148,34 @@ example {p : ℤ} (hp : p + 2 ≥ 9) : p ^ 2 ≥ 49 ∧ 7 ≤ p := by
 
 -- Exercise 2.4.5.5
 example {a : ℚ} (h : a - 1 ≥ 5) : a ≥ 6 ∧ 3 * a ≥ 10 := by
-  sorry
+  have h1 : a ≥ 6 := by addarith [h]
+  constructor
+  exact h1    -- apply h1 also works; I learned the use of exact from nng4.
+  calc
+    3 * a ≥ 3 * 6 := by rel [h1]
+    _ ≥ 10 := by numbers
 
 -- Exercise 2.4.5.6
 example {x y : ℚ} (h : x + y = 5 ∧ x + 2 * y = 7) : x = 3 ∧ y = 2 := by
-  sorry
+  obtain ⟨h1, h2⟩ := h
+  have h3 : 2 * x + 2 * y = 10 := by  -- h3 seemed like a good idea.
+    calc
+      2 * x + 2 * y = 2 * (x + y) := by ring
+      _ = 2 * 5 := by rw [h1]
+      _ = 10 := by numbers
+  have h4 : x = 3 := by -- and so did h4.
+    calc
+      x = 2 * x + 2 * y - (x + 2 * y) := by ring
+      _ = 10 - (x + 2 * y) := by rw [h3]
+      _ = 10 - 7 := by rw [h2]
+      _ = 3 := by numbers
+  constructor
+  exact h4
+  calc
+    y = x + y - x := by ring
+    _ = 5 - x := by rw [h1]
+    _ = 5 - 3 := by rw [h4]
+    _ = 2 := by numbers
 
 -- Exercise 2.4.5.7
 example {a b : ℝ} (h1 : a * b = a) (h2 : a * b = b) :
