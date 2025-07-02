@@ -177,7 +177,42 @@ example {x y : ℚ} (h : x + y = 5 ∧ x + 2 * y = 7) : x = 3 ∧ y = 2 := by
     _ = 5 - 3 := by rw [h4]
     _ = 2 := by numbers
 
--- Exercise 2.4.5.7
+/-!
+  Exercise 2.4.5.7
+
+  You will probably need the lemma `eq_zero_or_eq_zero_of_mul_eq_zero` proved in Example 2.3.4.
+-/
 example {a b : ℝ} (h1 : a * b = a) (h2 : a * b = b) :
     a = 0 ∧ b = 0 ∨ a = 1 ∧ b = 1 := by
-  sorry
+    have h3: a - b = 0 := by
+      calc
+        a - b = a - b := by rfl
+        _ = a * b - b := by rw [h1]
+        _ = a * b - a * b := by rw [h2]
+        _ = 0 := by ring
+    have h4: a = b := by addarith [h3]
+    have h5: a * b - a = 0 := by
+      calc
+        a * b - a = a - a := by rw [h1]
+        _ = 0 := by ring
+    have h6: a * (b - 1) = 0 := by
+      calc
+        a * (b - 1) = a * b - a := by ring
+        _ = 0 := by rw [h5]
+    have h7 := eq_zero_or_eq_zero_of_mul_eq_zero h6
+    obtain h7 | h7 := h7    -- h7: a = 0
+    . left                  -- ⊢ a = 0 ∧ b = 0
+      constructor           -- ⊢ a = 0
+      . exact h7
+      . calc                -- ⊢ b = 0
+          b = b := by rfl
+          _ = a := by rw [h4]
+          _ = 0 := by rw [h7]
+    . right                 -- ⊢ a = 1 ∧ b = 1
+                            -- h7: b - 1 = 0
+      have h8 : b = 1 := by addarith [h7]
+      constructor           -- ⊢ a = 1
+      . calc
+          a = b := by rw [h4]
+          _ = 1 := by rw [h8]
+      . exact h8            -- ⊢ b = 1
