@@ -85,15 +85,27 @@ example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 ∧ b = 1 := b
       _ = 9 := by ring
   · apply hb
 
-
+/-!
+  ### 2.4.4. Example
+-/
 example {a b : ℝ} (h1 : a ^ 2 + b ^ 2 = 0) : a = 0 ∧ b = 0 := by
   have h2 : a ^ 2 = 0
   · apply le_antisymm
-    calc
+    calc  -- ⊢ a ^ 2 ≤ 0
       a ^ 2 ≤ a ^ 2 + b ^ 2 := by extra
       _ = 0 := by rw [h1]
+    -- ⊢ 0 ≤ a ^ 2
     extra
-  sorry
+  constructor
+  -- ⊢ a = 0
+  cancel 2 at h2
+  -- ⊢ b = 0
+  have h3: b ^ 2 = 0
+  calc
+    b ^ 2 = 0 + b ^ 2 := by ring
+    _ = a ^ 2 + b ^ 2 := by rw [h2]
+    _ = 0 := by rw [h1]
+  cancel 2 at h3
 
 /-! # Exercises -/
 
