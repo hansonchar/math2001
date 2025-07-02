@@ -111,19 +111,40 @@ example {a b : ℝ} (h1 : a ^ 2 + b ^ 2 = 0) : a = 0 ∧ b = 0 := by
 
 -- Exercise 2.4.5.1
 example {a b : ℚ} (H : a ≤ 1 ∧ a + b ≤ 3) : 2 * a + b ≤ 4 := by
-  sorry
+  obtain ⟨h1, h2⟩ := H
+  calc
+    2 * a + b = a + (a + b) := by ring
+    _ ≤ 1 + (a + b) := by rel [h1]
+    _ ≤ 1 + 3 := by rel [h2]
+    _ = 4 := by numbers
 
 -- Exercise 2.4.5.2
 example {r s : ℝ} (H : r + s ≤ 1 ∧ r - s ≤ 5) : 2 * r ≤ 6 := by
-  sorry
+  obtain ⟨h1, h2⟩ := H
+  calc
+    2 * r = r + s + (r - s) := by ring
+    _ ≤ 1 + (r - s) := by rel [h1]
+    _ ≤ 1 + 5 := by rel [h2]
+    _ = 6 := by numbers
 
 -- Exercise 2.4.5.3
 example {m n : ℤ} (H : n ≤ 8 ∧ m + 5 ≤ n) : m ≤ 3 := by
-  sorry
+  obtain ⟨h1, h2⟩ := H
+  calc
+    m = m + 5 - 5 := by ring
+    _ ≤ n - 5 := by rel [h2]
+    _ ≤ 8 - 5 := by rel [h1]
+    _ = 3 := by numbers
 
 -- Exercise 2.4.5.4
 example {p : ℤ} (hp : p + 2 ≥ 9) : p ^ 2 ≥ 49 ∧ 7 ≤ p := by
-  sorry
+  have h1 : p ≥ 7 := by addarith [hp]
+  constructor
+  calc
+    p ^ 2 = p * p := by ring
+    _ ≥ 7 * 7 := by rel [h1]
+    _ = 49 := by numbers
+  addarith [h1]
 
 -- Exercise 2.4.5.5
 example {a : ℚ} (h : a - 1 ≥ 5) : a ≥ 6 ∧ 3 * a ≥ 10 := by
