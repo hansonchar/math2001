@@ -9,7 +9,7 @@ math2001_init
 
   ### 2.4.1. Example
 
-  Remark: uses obtain to split a conjunction into two hypothesis.
+  Remark: uses obtain to split a ∧ in a hypothesis into two hypotheses.
 -/
 
 example {x y : ℤ} (h : 2 * x - y = 4 ∧ y - x + 1 = 2) : x = 5 := by
@@ -107,27 +107,33 @@ example {a b : ℝ} (h1 : a ^ 2 + b ^ 2 = 0) : a = 0 ∧ b = 0 := by
     _ = 0 := by rw [h1]
   cancel 2 at h3
 
-/-! # Exercises -/
+/-! ### 2.4.5. Exercises -/
 
-
+-- Exercise 2.4.5.1
 example {a b : ℚ} (H : a ≤ 1 ∧ a + b ≤ 3) : 2 * a + b ≤ 4 := by
   sorry
 
+-- Exercise 2.4.5.2
 example {r s : ℝ} (H : r + s ≤ 1 ∧ r - s ≤ 5) : 2 * r ≤ 6 := by
   sorry
 
+-- Exercise 2.4.5.3
 example {m n : ℤ} (H : n ≤ 8 ∧ m + 5 ≤ n) : m ≤ 3 := by
   sorry
 
+-- Exercise 2.4.5.4
 example {p : ℤ} (hp : p + 2 ≥ 9) : p ^ 2 ≥ 49 ∧ 7 ≤ p := by
   sorry
 
+-- Exercise 2.4.5.5
 example {a : ℚ} (h : a - 1 ≥ 5) : a ≥ 6 ∧ 3 * a ≥ 10 := by
   sorry
 
+-- Exercise 2.4.5.6
 example {x y : ℚ} (h : x + y = 5 ∧ x + 2 * y = 7) : x = 3 ∧ y = 2 := by
   sorry
 
+-- Exercise 2.4.5.7
 example {a b : ℝ} (h1 : a * b = a) (h2 : a * b = b) :
     a = 0 ∧ b = 0 ∨ a = 1 ∧ b = 1 := by
   sorry
