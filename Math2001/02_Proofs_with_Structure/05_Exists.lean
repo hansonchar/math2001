@@ -4,7 +4,13 @@ import Library.Basic
 
 math2001_init
 
+/-!
+  ## 2.5. Existence proofs
+-/
 
+/-!
+  ### 2.5.1. Example
+-/
 example {a : ℚ} (h : ∃ b : ℚ, a = b ^ 2 + 1) : a > 0 := by
   obtain ⟨b, hb⟩ := h
   calc
