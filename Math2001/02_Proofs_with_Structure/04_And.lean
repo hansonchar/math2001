@@ -59,16 +59,23 @@ example {p : ℚ} (hp : p ^ 2 ≤ 8) : p ≥ -5 := by
     p ≥ -3 := by rel [h1]
     _ ≥ -5 := by numbers
 
+/-!
+  ### 2.4.3. Example
+
+  `constructor` splits a goal with `∧` into two goals.
+-/
 example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 ∧ b = 1 := by
   constructor
-  · calc
+  · calc          -- ⊢ a = 9
       a = 4 + 5 * b := by addarith [h1]
       _ = -6 + 5 * (b + 2) := by ring
       _ = -6 + 5 * 3 := by rw [h2]
       _ = 9 := by ring
-  · addarith [h2]
+  · addarith [h2] -- ⊢ b = 1
 
-
+/-!
+  Alternatively, there might be an intermediate fact which you wish to note and then use in both parts of the proof. For example, you might want to first solve for $b$, and then use that to shorten the work of solving for $a$.
+-/
 example {a b : ℝ} (h1 : a - 5 * b = 4) (h2 : b + 2 = 3) : a = 9 ∧ b = 1 := by
   have hb : b = 1 := by addarith [h2]
   constructor
