@@ -45,62 +45,98 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
 example {t x : ℝ} (h1 : 0 < x * t) (h2 : x > 0) : t > 0 := by
   cancel x at h1
 
+/-!
+  ### 2.5.3. Example
+-/
 example : ∃ n : ℤ, 12 * n = 84 := by
   use 7
   numbers
 
-
+/-!
+  ### 2.5.4. Example
+-/
 example (x : ℝ) : ∃ y : ℝ, y > x := by
   use x + 1
   extra
 
-
+/-!
+  ### 2.5.5. Example
+-/
 example : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 11 := by
-  sorry
+  use 6, 5  -- cute
+  numbers
 
+/-!
+  ### 2.5.6. Example
+-/
 example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
-  sorry
+  use (a + 1), a
+  ring  -- cute
 
+/-!
+  ### 2.5.7. Example
+-/
 example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
-  sorry
+  use (p + q) / 2 -- ⊢ p < (p + q) / 2 ∧ (p + q) / 2 < q
+  constructor
+  calc  -- ⊢ p < (p + q) / 2
+    p = (p + p) / 2 := by ring
+    _ < (p + q) / 2 := by rel [h]
+  calc  -- ⊢ (p + q) / 2 < q
+    (p + q) / 2 < (q + q) / 2 := by rel [h]
+    _ = q := by ring
 
+/-!
+  ### 2.5.8. Example
+
+  The Taxicab number!
+-/
 example : ∃ a b c d : ℕ,
     a ^ 3 + b ^ 3 = 1729 ∧ c ^ 3 + d ^ 3 = 1729 ∧ a ≠ c ∧ a ≠ d := by
   use 1, 12, 9, 10
-  constructor
+  constructor -- ⊢ 1 ^ 3 + 12 ^ 3 = 1729
   numbers
-  constructor
+  constructor -- ⊢ 9 ^ 3 + 10 ^ 3 = 1729
   numbers
-  constructor
-  numbers
+  constructor -- ⊢ 1 ≠ 9
+  numbers  -- ⊢ 1 ≠ 10
   numbers
 
-/-! # Exercises -/
+/-! ### 2.5.9. Exercises -/
 
-
+-- Exercise 2.5.9.1.
 example : ∃ t : ℚ, t ^ 2 = 1.69 := by
   sorry
+
+-- Exercise 2.5.9.2.
 example : ∃ m n : ℤ, m ^ 2 + n ^ 2 = 85 := by
   sorry
 
+-- Exercise 2.5.9.3.
 example : ∃ x : ℝ, x < 0 ∧ x ^ 2 < 1 := by
   sorry
+
+-- Exercise 2.5.9.4.
 example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
   sorry
 
+-- Exercise 2.5.9.5.
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
   sorry
 
+-- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   sorry
 
+-- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
   sorry
 
+-- Exercise 2.5.9.8.
 example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
   sorry
 
+-- Exercise 2.5.9.9.
 example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
   sorry
-–
