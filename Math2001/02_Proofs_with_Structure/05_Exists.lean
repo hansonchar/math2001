@@ -106,23 +106,65 @@ example : ∃ a b c d : ℕ,
 
 -- Exercise 2.5.9.1.
 example : ∃ t : ℚ, t ^ 2 = 1.69 := by
-  sorry
+  use 1.3
+  numbers
 
 -- Exercise 2.5.9.2.
 example : ∃ m n : ℤ, m ^ 2 + n ^ 2 = 85 := by
-  sorry
+  use 2, 9
+  numbers
 
 -- Exercise 2.5.9.3.
 example : ∃ x : ℝ, x < 0 ∧ x ^ 2 < 1 := by
-  sorry
+  use -0.5
+  constructor
+  numbers -- ⊢ -0.5 < 0
+  numbers -- ⊢ (-0.5)^2 < 1
 
 -- Exercise 2.5.9.4.
 example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
-  sorry
+  use 4, 3
+  numbers
 
 -- Exercise 2.5.9.5.
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
-  sorry
+  obtain hx | hx := le_or_gt x 0
+  -- First case. hx: x ≤ 0
+  use x - 1
+  have hx' : -x ≥ 0 := by addarith [hx]
+  have hxx : -x ≥ x := by
+    calc
+      -x = -x := by rfl
+      _ ≥ 0 := hx'
+      _ ≥ x := hx
+
+  -- We introduce the next hypothesis so that, later on, we can turn `-x` into `p`, a form without
+  -- the minus sign. This led to breaking through the barrier of using `extra`, which in addition
+  -- requires the existence of a hypothesis that `p ≥ 0`.
+  have P : ∃ p, p = -x
+  use -x
+  rfl
+
+  obtain ⟨p, hpx⟩ := P -- hpx: p = -x
+  have hxp : -x = p := by addarith [hpx]
+  have hpz : p ≥ 0 := by
+    calc
+      p = -x := hpx
+      _ ≥ 0 := hx'
+  calc
+    (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
+    _ = x^2 + p + p + 1 := by rw [hxp]  -- work.
+    _ ≥ p + 1 := by extra -- implicitly makes use of `hpz`
+    _ > p := by extra
+    _ = -x := by rw [hpx]
+    _ ≥ x := by rel [hxx]
+
+  -- Second case. hx: x > 0
+  use x + 1
+  calc
+    (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
+    _ > x ^ 2 + x + x := by extra
+    _ ≥ x := by extra
 
 -- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
