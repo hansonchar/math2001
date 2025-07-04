@@ -166,6 +166,44 @@ example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
     _ > x ^ 2 + x + x := by extra
     _ ≥ x := by extra
 
+-- https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/near/527103874
+-- Experiments on `extra`.
+example (p: ℝ) (hp: p ≥ 0) : 2 * p ≥ p := by
+calc
+  2 * p = p + p := by ring
+  _ ≥ p := by extra
+
+-- `rel` can be used instead.
+example (p: ℝ) (hp: p ≥ 0) : 2 * p ≥ p := by
+calc
+  2 * p = p + p := by ring
+  _ ≥ p + 0 := by rel [hp]
+  _ = p := by ring
+
+-- This doesn't work. It seems `extra` works only specifically for adding non-negative quantities.
+-- example (q: ℝ) (hq: q ≤ 0) : 2 * q ≤ q := by
+-- calc
+--   2 * q = q + q := by ring
+--   _ ≤ q + 0 := by extra
+
+-- We need to use `rel` instead:
+example (q: ℝ) (hq: q ≤ 0) : 2 * q ≤ q := by
+calc
+  2 * q = q + q := by ring
+  _ ≤ q + 0 := by rel [hq]
+  _ = q := by ring
+
+-- `extra` comes in handy when there is square involved, e.g.
+example (n: ℝ) : 0 ≤ n^2 := by extra
+
+example (q: ℝ) (hq: q ≤ 0) : 2 * q ≤ q := by
+  have hq' : q ≥ 2 * q := by
+    calc
+      q = q + 0 := by ring
+      _ ≥ q + q := by rel [hq]
+      _ = 2 * q := by ring
+  addarith [hq']
+
 -- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   sorry
