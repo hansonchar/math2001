@@ -166,6 +166,32 @@ example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
     _ > x ^ 2 + x + x := by extra
     _ ≥ x := by extra
 
+-- Alternatively, we don't need to introduce `p`:
+example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
+  obtain hx | hx := le_or_gt x 0
+  -- First case. hx: x ≤ 0
+  use x - 1
+  have hx' : -x ≥ 0 := by addarith [hx]
+  have hxx : -x ≥ x := by
+    calc
+      -x = -x := by rfl
+      _ ≥ 0 := hx'
+      _ ≥ x := hx
+  calc
+    (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
+    _ ≥ x^2 + (-x) + 0 + 1 := by rel [hx']  -- work.
+    _ = x^2 + (-x) + 1 := by ring
+    _ ≥ (-x) + 1 := by extra
+    _ > -x := by extra
+    _ ≥ x := by rel [hxx]
+
+  -- Second case. hx: x > 0
+  use x + 1
+  calc
+    (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
+    _ > x ^ 2 + x + x := by extra
+    _ ≥ x := by extra
+
 -- https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/near/527103874
 -- Experiments on `extra`.
 example (p: ℝ) (hp: p ≥ 0) : 2 * p ≥ p := by
