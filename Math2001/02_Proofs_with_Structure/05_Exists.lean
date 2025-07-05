@@ -230,9 +230,63 @@ example (q: ℝ) (hq: q ≤ 0) : 2 * q ≤ q := by
       _ = 2 * q := by ring
   addarith [hq']
 
+--
+example {p q : ℝ} (hp : p < 0) (hq : q < 0) : p * q > 0 := by
+  have hp' : -p > 0 := by addarith [hp]
+  have hq' : -q > 0 := by addarith [hq]
+  calc
+    p * q = (-p) * (-q) := by ring
+    _ > 0 := by extra -- `extra` works here because `-p` and `-q` are both positive.
+
+example {t p : ℝ} (hp : p > 0) (ht : 0 < t * p) : 0 < t := by cancel p at ht
+example {t p : ℝ} (hp : 1 - p > 0) (ht : 0 < t * (1 - p)) : 0 < t := by
+  cancel (1 - p) at ht
+
 -- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
+  obtain ⟨x, hxt⟩ := h         -- hx: x * t + 1 < x + t
+  have H := lt_trichotomy x 0
+  obtain xltz | xeqz | xgtz := H
+  -- First case. xltz: x < 0
+  have h1 : -x > 0 := by addarith [xltz]
+  have h2 : 1 - x > 0 := by
+    calc
+      1 - x = 1 + (-x) := by ring
+      _ > 1 + 0 := by rel [h1]
+      _ > 0 := by numbers
+  -- have h2' : 1 - x > 1 := by
+  --   calc
+  --     1 - x = 1 + (-x) := by ring
+  --     _ > 1 + 0 := by rel [hx]
+  --     _ = 1 := by numbers
+  apply ne_of_gt  -- ⊢ 1 < t
+  have h3 : 1 - x < t * (1 - x) := by
+    calc
+      1 - x < t - x * t := by addarith [hxt]
+      _ = t * (1 - x) := by ring
+  have h4 : 0 < t * (1 - x) - (1 - x) := by addarith [h3]
+  have h5 : 0 < (t - 1) * (1 - x) := by
+    calc
+      0 < t * (1 - x) - (1 - x) := h4
+      _ = (t - 1) * (1 - x) := by ring
+  have h6 : 0 < t - 1 := by cancel (1 - x) at h5
+  have h7 : 1 < t := by addarith [h6]
+  exact h7
+  have h8 : 0 = x * t := by
+    calc
+      0 = 0 := by rfl
+      _ = 0 * t := by ring
+      _ = x * t := by rw [xeqz]
+  -- Second case. xeqz: x = 0
+  apply ne_of_gt  -- ⊢ 1 > t
+  calc
+    1 < x + t - x * t := by addarith [hxt]
+    _ = 0 + t - x * t := by rw [xeqz]
+    _ = 0 + t - 0 := by rw [h8]
+    _ = t := by ring
+  -- Third case. xgtz: x > 0
   sorry
+
 
 -- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
