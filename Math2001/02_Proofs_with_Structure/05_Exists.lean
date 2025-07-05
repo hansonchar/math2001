@@ -266,13 +266,32 @@ example {t p : ℝ} (hp : 1 - p > 0) (ht : 0 < t * (1 - p)) : 0 < t := by
 -- How to prove any conclusion from a false hypothesis?
 example {t : ℝ} (h : False) : t ≠ t := by
   contradiction
-
-example {t : ℝ} (h1 : 1 ≠ 1) : -1 = 1 := by
+example {t : ℝ} (h1 : t ≠ t) : -1 = 1 := by
   contradiction
+
+example {t : ℝ} (h1 : 0 < t) (h2 : 0 = t) : -1 = 1 := by
+  have false: t ≠ t := by -- We introduce a `false` hypothesis in the necessary form,
+    apply ne_of_gt  -- namely `t ≠ t`, so that we can apply `contradcition`.
+    calc
+      t < t + t := by addarith [h1]
+      _ = t + 0 := by rw [h2]
+      _ = t := by ring
+  contradiction -- ⊢ t ≠ t
+
+-- example {t : ℝ} (h1 : (t - 1) * 0 ≠ (t - 1) * 0) : -1 = 1 := by contradiction
 
 -- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   obtain ⟨x, hxt⟩ := h         -- hx: x * t + 1 < x + t
+  have hxt1 : 0 < x + t - x * t - 1 := by addarith [hxt]
+  have hxt2 : 0 < (t - 1) * (1 - x) := by
+    calc
+      0 < x + t - x * t - 1 := hxt1
+      _ = (t - 1) * (1 - x) := by ring
+  have hxt3 : 0 < (1 - t) * (x - 1) := by
+    calc
+      0 < x + t - x * t - 1 := hxt1
+      _ = (1 - t) * (x - 1) := by ring
   have H := lt_trichotomy x 0
   obtain xltz | xeqz | xgtz := H
   -- First case. xltz: x < 0
@@ -282,22 +301,8 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
       1 - x = 1 + (-x) := by ring
       _ > 1 + 0 := by rel [h1]
       _ > 0 := by numbers
-  -- have h2' : 1 - x > 1 := by
-  --   calc
-  --     1 - x = 1 + (-x) := by ring
-  --     _ > 1 + 0 := by rel [hx]
-  --     _ = 1 := by numbers
   apply ne_of_gt  -- ⊢ 1 < t
-  have h3 : 1 - x < t * (1 - x) := by
-    calc
-      1 - x < t - x * t := by addarith [hxt]
-      _ = t * (1 - x) := by ring
-  have h4 : 0 < t * (1 - x) - (1 - x) := by addarith [h3]
-  have h5 : 0 < (t - 1) * (1 - x) := by
-    calc
-      0 < t * (1 - x) - (1 - x) := h4
-      _ = (t - 1) * (1 - x) := by ring
-  have h6 : 0 < t - 1 := by cancel (1 - x) at h5
+  have h6 : 0 < t - 1 := by cancel (1 - x) at hxt2
   have h7 : 1 < t := by addarith [h6]
   exact h7
   have h8 : 0 = x * t := by
@@ -306,16 +311,41 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
       _ = 0 * t := by ring
       _ = x * t := by rw [xeqz]
   -- Second case. xeqz: x = 0
-  apply ne_of_gt  -- ⊢ 1 > t
+  apply ne_of_gt  -- ⊢ 1 < t
   calc
     1 < x + t - x * t := by addarith [hxt]
     _ = 0 + t - x * t := by rw [xeqz]
     _ = 0 + t - 0 := by rw [h8]
     _ = t := by ring
   -- Third case. xgtz: x > 0
-  have H1 := le_or_gt x 1
-  sorry
-
+  have H1 := lt_trichotomy x 1
+  obtain xlt1 | xeq1 | xgt1 := H1
+  -- xlt1: x < 1
+  apply ne_of_gt  -- ⊢ 1 < t
+  have h1 : 1 - x > 0 := by addarith [xlt1]
+  have h2 : 0 < t - 1 := by cancel (1 - x) at hxt2
+  addarith [h2]
+  -- xeq1: x = 1
+  have h3 : 1 - x = 0 := by
+    calc
+      1 - x = 1 - 1 := by rw [xeq1]
+      _ = 0 := by numbers
+  rw [h3] at hxt2
+  have h4 : (t - 1) * 0 = 0 := by ring
+  have false : (t - 1) * 0 ≠ (t - 1) * 0 := by
+    apply ne_of_gt  -- ⊢ (t - 1) * 0 < (t - 1) * 0
+    calc
+      (t - 1) * 0 = (t - 1) * 0 := by rfl
+      _ = (t - 1) * 0 + 0 := by ring
+      _ < (t - 1) * 0 + (t - 1) * 0 := by rel [hxt2]
+      _ = (t - 1) * 0 + 0 := by rw [h4]
+      _ = (t - 1) * 0 := by ring
+  contradiction -- ⊢ (t - 1) * 0 ≠ (t - 1) * 0
+  -- xgt1: x > 1
+  apply ne_of_lt  -- ⊢ t < 1
+  have h1 : 0 < x - 1 := by addarith [xgt1]
+  have h2 : 0 < (1 - t) := by cancel (x - 1) at hxt3
+  addarith [h2]
 
 -- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
