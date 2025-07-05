@@ -238,9 +238,37 @@ example {p q : ℝ} (hp : p < 0) (hq : q < 0) : p * q > 0 := by
     p * q = (-p) * (-q) := by ring
     _ > 0 := by extra -- `extra` works here because `-p` and `-q` are both positive.
 
+-- How to cancel a term from both sides of an inequality?
 example {t p : ℝ} (hp : p > 0) (ht : 0 < t * p) : 0 < t := by cancel p at ht
+example {t p : ℝ} (hp : -p > 0) (ht : 0 < t * -p) : 0 < t := by cancel -p at ht
+
+example {t p : ℝ} (hp : -p > 0) (ht : 0 > t * -p) : t < 0 := by
+  have h1 : 0 < -t * -p := by addarith [ht]
+  have h2 : 0 < -t := by cancel -p at h1
+  addarith [h2]
+
+example {t p : ℝ} (hp : p < 0) (ht : 0 < t * p) : t < 0 := by
+  have hp' : 0 < -p := by addarith [hp]
+  have h1 : 0 > t * -p := by
+    calc
+      0 > -(t * p) := by addarith [ht]  -- flip the inequality sign
+      _ = t * -p := by ring
+  have h2 : 0 < -t * -p := by addarith [h1]
+  -- `cancel` works below because of two necessary conditions:
+  -- 1. `-p` is positive, and
+  -- 2. the rhs is > 0.
+  have h3 : 0 < -t := by cancel -p at h2
+  addarith [h3]
+
 example {t p : ℝ} (hp : 1 - p > 0) (ht : 0 < t * (1 - p)) : 0 < t := by
   cancel (1 - p) at ht
+
+-- How to prove any conclusion from a false hypothesis?
+example {t : ℝ} (h : False) : t ≠ t := by
+  contradiction
+
+example {t : ℝ} (h1 : 1 ≠ 1) : -1 = 1 := by
+  contradiction
 
 -- Exercise 2.5.9.6.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
@@ -285,6 +313,7 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
     _ = 0 + t - 0 := by rw [h8]
     _ = t := by ring
   -- Third case. xgtz: x > 0
+  have H1 := le_or_gt x 1
   sorry
 
 
