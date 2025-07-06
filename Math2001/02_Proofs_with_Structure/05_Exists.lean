@@ -294,60 +294,62 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
     calc
       0 < x + t - x * t - 1 := hxt1
       _ = (1 - t) * (x - 1) := by ring
+  -- Split into three main cases.
   have H := lt_trichotomy x 0
   obtain xltz | xeqz | xgtz := H
-  -- First case. xltz: x < 0
-  have h1 : -x > 0 := by addarith [xltz]
-  have h2 : 1 - x > 0 := by
+  -- Case 1. xltz: x < 0
+  . have h1 : -x > 0 := by addarith [xltz]
+    have h2 : 1 - x > 0 := by
+      calc
+        1 - x = 1 + (-x) := by ring
+        _ > 1 + 0 := by rel [h1]
+        _ > 0 := by numbers
+    apply ne_of_gt  -- ⊢ 1 < t
+    have h6 : 0 < t - 1 := by cancel (1 - x) at hxt2
+    have h7 : 1 < t := by addarith [h6]
+    exact h7
+  -- Case 2. xeqz: x = 0
+  . have h8 : 0 = x * t := by
+        calc
+          0 = 0 := by rfl
+          _ = 0 * t := by ring
+          _ = x * t := by rw [xeqz]
+    apply ne_of_gt  -- ⊢ 1 < t
     calc
-      1 - x = 1 + (-x) := by ring
-      _ > 1 + 0 := by rel [h1]
-      _ > 0 := by numbers
-  apply ne_of_gt  -- ⊢ 1 < t
-  have h6 : 0 < t - 1 := by cancel (1 - x) at hxt2
-  have h7 : 1 < t := by addarith [h6]
-  exact h7
-  have h8 : 0 = x * t := by
-    calc
-      0 = 0 := by rfl
-      _ = 0 * t := by ring
-      _ = x * t := by rw [xeqz]
-  -- Second case. xeqz: x = 0
-  apply ne_of_gt  -- ⊢ 1 < t
-  calc
-    1 < x + t - x * t := by addarith [hxt]
-    _ = 0 + t - x * t := by rw [xeqz]
-    _ = 0 + t - 0 := by rw [h8]
-    _ = t := by ring
-  -- Third case. xgtz: x > 0
-  have H1 := lt_trichotomy x 1
-  obtain xlt1 | xeq1 | xgt1 := H1
-  -- xlt1: x < 1
-  apply ne_of_gt  -- ⊢ 1 < t
-  have h1 : 1 - x > 0 := by addarith [xlt1]
-  have h2 : 0 < t - 1 := by cancel (1 - x) at hxt2
-  addarith [h2]
-  -- xeq1: x = 1
-  have h3 : 1 - x = 0 := by
-    calc
-      1 - x = 1 - 1 := by rw [xeq1]
-      _ = 0 := by numbers
-  rw [h3] at hxt2
-  have h4 : (t - 1) * 0 = 0 := by ring
-  have false : (t - 1) * 0 ≠ (t - 1) * 0 := by
-    apply ne_of_gt  -- ⊢ (t - 1) * 0 < (t - 1) * 0
-    calc
-      (t - 1) * 0 = (t - 1) * 0 := by rfl
-      _ = (t - 1) * 0 + 0 := by ring
-      _ < (t - 1) * 0 + (t - 1) * 0 := by rel [hxt2]
-      _ = (t - 1) * 0 + 0 := by rw [h4]
-      _ = (t - 1) * 0 := by ring
-  contradiction -- ⊢ (t - 1) * 0 ≠ (t - 1) * 0
-  -- xgt1: x > 1
-  apply ne_of_lt  -- ⊢ t < 1
-  have h1 : 0 < x - 1 := by addarith [xgt1]
-  have h2 : 0 < (1 - t) := by cancel (x - 1) at hxt3
-  addarith [h2]
+      1 < x + t - x * t := by addarith [hxt]
+      _ = 0 + t - x * t := by rw [xeqz]
+      _ = 0 + t - 0 := by rw [h8]
+      _ = t := by ring
+  -- Case 3. xgtz: x > 0
+  -- Further split into three sub-cases.
+  . have H1 := lt_trichotomy x 1
+    obtain xlt1 | xeq1 | xgt1 := H1
+    -- Case 3.1. xlt1: x < 1
+    . apply ne_of_gt  -- ⊢ 1 < t
+      have h1 : 1 - x > 0 := by addarith [xlt1]
+      have h2 : 0 < t - 1 := by cancel (1 - x) at hxt2
+      addarith [h2]
+    -- Case 3.2. xeq1: x = 1
+    . have h3 : 1 - x = 0 := by
+        calc
+          1 - x = 1 - 1 := by rw [xeq1]
+          _ = 0 := by numbers
+      rw [h3] at hxt2
+      have h4 : (t - 1) * 0 = 0 := by ring
+      have false : (t - 1) * 0 ≠ (t - 1) * 0 := by
+        apply ne_of_gt  -- ⊢ (t - 1) * 0 < (t - 1) * 0
+        calc
+          (t - 1) * 0 = (t - 1) * 0 := by rfl
+          _ = (t - 1) * 0 + 0 := by ring
+          _ < (t - 1) * 0 + (t - 1) * 0 := by rel [hxt2]
+          _ = (t - 1) * 0 + 0 := by rw [h4]
+          _ = (t - 1) * 0 := by ring
+      contradiction -- ⊢ (t - 1) * 0 ≠ (t - 1) * 0
+    -- Case 3.3. xgt1: x > 1
+    . apply ne_of_lt  -- ⊢ t < 1
+      have h1 : 0 < x - 1 := by addarith [xgt1]
+      have h2 : 0 < (1 - t) := by cancel (x - 1) at hxt3
+      addarith [h2]
 
 -- Second attempt on Exercise 2.5.9.6, using only what we've learned here so far.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
@@ -366,7 +368,7 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   obtain h1 | h1 := H
   -- Case 1. h1: 1 - s ≤ t - 1
   . have S := le_or_gt (1 - s) 0
-  -- Within the first case, we further split into two cases.
+  -- Within the first case, we further split into two sub-cases.
     obtain h2 | h2 := S
     -- Case 1.1. h2: 1 - s ≤ 0
     . have h3 : s - 1 ≥ 0 := by addarith [h2] -- used implicitly in `cancel`
@@ -379,6 +381,7 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
       addarith [h3]
   -- Case 2. h1: 1 - s > t - 1
   . have S := le_or_gt (1 - s) 0
+    -- Within the second case, we further split into two sub-cases.
     obtain h2 | h2 := S
     -- Case 2.1. h2: 1 - s ≤ 0
     . have h3 : s - 1 ≥ 0 := by addarith [h2] -- used implicitly in `cancel`
