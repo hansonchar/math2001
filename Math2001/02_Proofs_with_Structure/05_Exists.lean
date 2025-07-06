@@ -469,10 +469,11 @@ example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
     _ ≥ n ^ 3 + 2 * n + 7 := by rel [h2]
     _ = n * (n ^ 2 + 2) + 7 := by ring
 
--- Nice!
+-- Exploring. Nice to find out!
 example {n : ℝ} (h1: n ≥ 0) (h2 : n ≤ 0): n = 0 := by addarith [h1, h2]
 -- example {n : ℝ} (h1: 2 * n ≥ n) (h2 : 2 * n ≤ n): n = 0 := by addarith [h1, h2]
 
+-- Exploring.
 example {n : ℝ} (h : 2 * n ≥ n) : n ≥ 0 := by
   have H := le_or_gt n 0
   obtain hn | hn := H
@@ -484,38 +485,24 @@ example {n : ℝ} (h : 2 * n ≥ n) : n ≥ 0 := by
   -- hn: n > 0
   . addarith [hn]
 
-example {a b c : ℝ} (h : 2 * (a+b+c) ≥ (a+b+c)) : (a+b+c) ≥ 0 := by
+-- Exploring by squeezing out more info from a + b + c.
+example {a b c : ℝ} (h : 2 * (a + b + c) ≥ (a + b + c)) : (a + b + c) ≥ 0 := by
   have H := le_or_gt (a+b+c) 0
   obtain hn | hn := H
   -- hn: n ≤ 0
   . calc
-      (a+b+c) = 2 * (a+b+c) - (a+b+c) := by ring
-      _ ≥ (a+b+c) - (a+b+c) := by rel [h]
+      (a + b + c) = 2 * (a + b + c) - (a + b + c) := by ring
+      _ ≥ (a + b + c) - (a + b + c) := by rel [h]
       _ = 0 := by ring
   -- hn: n > 0
   . addarith [hn]
 
--- Exercise 2.5.9.9.
--- example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
---     ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
---   have h1 : a + b + c ≤ 2 * (a + b + c) := by
---     calc
---       a + b + c ≤ (b + c) + (a + c) + (a + b) := by rel [ha, hb, hc]
---       _ = 2 * (a + b + c) := by ring
---   have h2 : 2 * (a + b + c) ≥ a + b + c := by addarith [h1]
---   have h3 : a + b + c ≥ 0 := by
---     have H := le_or_gt (a + b + c) 0-- ⊢ a + b + c ≥ 0
---     obtain h4 | h4 := H
---     . have h4' : -(a + b + c) ≥ 0 := by addarith [h4]
---       calc
---         a + b + c = -1 * -(a + b + c) := by ring
---         _ ≤ -1 * 0 := by rel [h4']
---   sorry
-
+/-
+-- Initial struggling.
 -- Exercise 2.5.9.9.
 example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
-  use b + c, a + c, a + b
+  use (b + c) / 2, (a + c) / 2, (a + b) / 2 -- This guess doesn't work.
   have h1 : a + b + c ≤ 2 * (a + b + c) := by
     calc
       a + b + c ≤ (b + c) + (a + c) + (a + b) := by rel [ha, hb, hc]
@@ -531,20 +518,22 @@ example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     -- h: a + b + c > 0
     . addarith [h]
   constructor
-  -- ⊢ b + c ≥ 0
+  -- ⊢ (b + c) / 2 ≥ 0
   . have H := le_or_gt a 0
     obtain h | h := H
     -- h: a ≤ 0
     . have h' : -a ≥ 0 := by addarith [h]
       calc
-        b + c = a + b + c - a := by ring
-        _ ≥ 0 - a := by rel [h2]
-        _ = -a := by ring
-        _ ≥ 0 := by rel [h']
+        (b + c) / 2 = (a + b + c - a) / 2 := by ring
+        _ ≥ (0 - a) / 2 := by rel [h2]
+        _ = -a / 2 := by ring
+        _ ≥ 0 / 2 := by rel [h']
+        _ = 0 := by numbers
     -- ⊢ a > 0
     . calc
-        b + c ≥ a := by addarith [ha]
-        _ ≥ 0 := by rel [h]
+        (b + c) / 2 ≥ a / 2 := by addarith [ha]
+        _ ≥ 0 / 2 := by rel [h]
+        _ = 0 := by numbers
   constructor
   -- ⊢ a + c ≥ 0
   . have H := le_or_gt b 0
@@ -552,14 +541,16 @@ example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     -- h: b ≤ 0
     . have h' : -b ≥ 0 := by addarith [h]
       calc
-        a + c = a + b + c - b := by ring
-        _ ≥ 0 - b := by rel [h2]
-        _ = -b := by ring
-        _ ≥ 0 := by rel [h']
+        (a + c) / 2 = (a + b + c - b) / 2 := by ring
+        _ ≥ (0 - b) / 2 := by rel [h2]
+        _ = -b / 2 := by ring
+        _ ≥ 0 / 2 := by rel [h']
+        _ = 0 := by numbers
     -- ⊢ b > 0
     . calc
-        a + c ≥ b := by addarith [hb]
-        _ ≥ 0 := by rel [h]
+        (a + c) / 2 ≥ b / 2 := by addarith [hb]
+        _ ≥ 0 / 2 := by rel [h]
+        _ = 0 := by numbers
   constructor
   -- ⊢ a + b ≥ 0
   . have H := le_or_gt c 0
@@ -567,14 +558,80 @@ example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     -- h: c ≤ 0
     . have h' : -c ≥ 0 := by addarith [h]
       calc
-        a + b = a + b + c - c := by ring
-        _ ≥ 0 - c := by rel [h2]
-        _ = -c := by ring
-        _ ≥ 0 := by rel [h']
+        (a + b) / 2 = (a + b + c - c) / 2 := by ring
+        _ ≥ (0 - c) / 2 := by rel [h2]
+        _ = -c / 2 := by ring
+        _ ≥ 0 / 2 := by rel [h']
+        _ = 0 := by numbers
     -- ⊢ c > 0
     . calc
-        a + b ≥ c := by addarith [hc]
-        _ ≥ 0 := by rel [h]
+        (a + b) / 2 ≥ c / 2 := by addarith [hc]
+        _ ≥ 0 / 2 := by rel [h]
+        _ = 0 := by numbers
   constructor
-  -- a = a + c + (a + b)
+  -- a = (a + c) /2 + (a + b) / 2
+  -- dead end
   sorry
+-/
+
+/-
+-- More struggling.
+-- Exercise 2.5.9.9.
+example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
+    ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
+  have h1 : a + b + c ≤ 2 * (a + b + c) := by
+    calc
+      a + b + c ≤ (b + c) + (a + c) + (a + b) := by rel [ha, hb, hc]
+      _ = 2 * (a + b + c) := by ring
+  have h2 : a + b + c ≥ 0 := by
+    have H := le_or_gt (a + b + c) 0
+    obtain h | h := H
+    -- h: a + b + c ≤ 0
+    . calc
+        (a + b + c) = 2 * (a + b + c) - (a + b + c) := by ring
+        _ ≥ (a + b + c) - (a + b + c) := by rel [h1]
+        _ = 0 := by ring
+    -- h: a + b + c > 0
+    . addarith [h]
+  use 0, 0, 0  -- Specific numbers don't work!
+  constructor
+  numbers -- ⊢ 0 ≥ 0
+  constructor
+  numbers -- ⊢ 0 ≥ 0
+  constructor
+  numbers -- ⊢ 0 ≥ 0
+  constructor
+  -- ⊢ a = 0 + 0
+  -- dead end
+  sorry
+-/
+
+-- Enlightenment :)
+-- Exercise 2.5.9.9.
+-- First of all, `x, y, z` cannot be some specific real numbers or constants, since
+-- `a, b, c` can be any real numbers that satisfy the given hypotheses.
+-- Hence, `x, y, z` must be expressed in terms of `a, b, c`. How can we do that?
+--  b = x + z => x = b - z, but what is z?
+--   a = y + z => z = a - y
+--   so, x = b - (a - y) = b - a + y, but what is y?
+--     c = x + y => y = c - x
+--     so, x = b - a + (c - x) = b - a + c - x
+--        2x = b + c - a
+--         x = (b + c - a) / 2
+-- Then apply similar logic y and z. It's symmetric.
+example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
+    ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
+  -- This is the key insight, or discovery. The rest follows.
+  use (b + c - a) / 2, ( a + c - b) / 2, ( a + b - c) / 2
+  constructor -- ⊢ (b + c - a) / 2 ≥ 0
+  addarith [ha]
+  constructor -- ⊢ (a + c - b) / 2 ≥ 0
+  addarith [hb]
+  constructor -- ⊢ (a + b - c) / 2 ≥ 0
+  addarith [hc]
+  constructor -- ⊢ a = (a + c - b) / 2 + (a + b - c) / 2
+  ring
+  constructor -- ⊢ b = (b + c - a) / 2 + (a + b - c) / 2
+  ring
+  -- ⊢ c = (b + c - a) / 2 + (a + c - b) / 2
+  ring
