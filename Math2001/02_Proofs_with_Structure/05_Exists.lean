@@ -424,7 +424,44 @@ example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
 
 -- Exercise 2.5.9.8.
 example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
-  sorry
+  have h0 : n ^ 2 ≥ 0 := by extra
+  have h1 : n ^ 4 ≥ 0 := by extra
+  have h2 : n ^ 6 ≥ 0 := by extra
+  have h3 : n ^ 2 ≥ n := by
+    have H := le_or_gt n 0
+    obtain hn | hn := H
+    -- hn: n ≤ 0
+    . have hn' : -n ≥ 0 := by addarith [hn]
+      calc
+        n ^ 2 = (-n) * (-n) := by ring
+        _ ≥ 0 * 0 := by rel [hn']
+        _ = 0 := by numbers
+        _ ≥ n := by rel [hn]
+    -- hn: n > 0
+    . have hn' : n ≥ 1 := by addarith [hn]
+      calc
+        n ^ 2 = n * n := by ring
+        _ ≥ n * 1 := by rel [hn']
+        _ = n := by ring
+  have h4 : n ^ 4 ≥ n ^ 3 := by
+    calc
+      n ^ 4 = n ^ 2 * n ^ 2 := by ring
+      _ ≥ n * n ^ 2 := by rel [h3]
+      _ = n ^ 3 := by ring
+  use n ^ 2 + 2
+  -- have h5 : 2 * (n ^ 2 + 2) ^ 3 = 2 * (n ^ 6 + 6 * n ^ 4 + 12 * n ^ 2 + 8) := by ring
+  calc
+    2 * (n ^ 2 + 2) ^ 3 = 2 * n ^ 6 + 12 * n ^ 4 + 24 * n ^ 2 + 7 + 9 := by ring
+    _ ≥ 2 * n ^ 6 + 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra
+    _ ≥ 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra
+    _ = 12 * n ^ 4 + 22 * n ^ 2 + 2 * n ^ 2 + 7 := by ring
+    _ ≥ 12 * n ^ 4 + 2 * n ^ 2 + 7 := by extra
+    _ ≥ 12 * n ^ 4 + 2 * n + 7 := by rel [h3]
+    _ = 11 * n ^ 4 + n^ 4 + 2 * n + 7 := by ring
+    _ ≥ n ^ 4 + 2 * n + 7 := by extra
+    _ ≥ n ^ 3 + 2 * n + 7 := by rel [h4]
+    _ = n * (n ^ 2 + 2) + 7 := by ring
+  -- sorry
 
 -- Exercise 2.5.9.9.
 example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
