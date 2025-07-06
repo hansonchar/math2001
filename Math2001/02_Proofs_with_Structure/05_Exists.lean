@@ -390,6 +390,18 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
       apply ne_of_gt
       addarith [h3]
 
+-- `cancel` works as expected.
+example {p q : ℝ} (hp : 0 < p * q) (hq : q > 0) : p > 0 := by
+  cancel q at hp
+
+-- `cancel` also works in the following two cases, perhaps a little surprisingly.
+-- In case `q = 0`, `hp` becomes false, so the conclusion holds vacuously.
+-- More info: https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/.E2.9C.94.20cancel.20tactic.20on.20zero.20in.20The.20Mechanics.20of.20Proof/with/527320439
+example {p q : ℝ} (hp : 0 < p * q) (hq : q ≥ 0) : p > 0 := by
+  cancel q at hp
+example {p q : ℝ} (hp : 0 < p * q) (hq : q = 0) : p > 0 := by
+  cancel q at hp
+
 -- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
   sorry
