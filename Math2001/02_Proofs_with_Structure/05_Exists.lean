@@ -422,12 +422,20 @@ example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
       _ ≥ 2 * 3 := by rel [h3]
       _ = 6 := by numbers -- Note `m ≥ 6` satisfies `⊢ m > 5`.
 
--- Exercise 2.5.9.8.
+/-!
+  Exercise 2.5.9.8.
+
+  The key insight is to use `n ^ 2 + 2` as a candidate for `a`. How do we come to that?
+
+  Consider three possible cases individually:
+  1. If n = 0, a ≥ 2 works.
+  2. If n > 0, a ≥ n + 1 works.
+  3. If n < 0, a ≥ 1 - n works.
+
+  This suggests that n ^ 2 + 2 works in all three cases.
+-/
 example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
-  have h0 : n ^ 2 ≥ 0 := by extra
-  have h1 : n ^ 4 ≥ 0 := by extra
-  have h2 : n ^ 6 ≥ 0 := by extra
-  have h3 : n ^ 2 ≥ n := by
+  have h1 : n ^ 2 ≥ n := by
     have H := le_or_gt n 0
     obtain hn | hn := H
     -- hn: n ≤ 0
@@ -443,25 +451,23 @@ example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
         n ^ 2 = n * n := by ring
         _ ≥ n * 1 := by rel [hn']
         _ = n := by ring
-  have h4 : n ^ 4 ≥ n ^ 3 := by
+  have h2 : n ^ 4 ≥ n ^ 3 := by
     calc
       n ^ 4 = n ^ 2 * n ^ 2 := by ring
-      _ ≥ n * n ^ 2 := by rel [h3]
+      _ ≥ n * n ^ 2 := by rel [h1]
       _ = n ^ 3 := by ring
-  use n ^ 2 + 2
-  -- have h5 : 2 * (n ^ 2 + 2) ^ 3 = 2 * (n ^ 6 + 6 * n ^ 4 + 12 * n ^ 2 + 8) := by ring
+  use n ^ 2 + 2 -- This is the key insignt. The rest follows.
   calc
     2 * (n ^ 2 + 2) ^ 3 = 2 * n ^ 6 + 12 * n ^ 4 + 24 * n ^ 2 + 7 + 9 := by ring
-    _ ≥ 2 * n ^ 6 + 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra
-    _ ≥ 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra
+    _ ≥ 2 * n ^ 6 + 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra -- get rid of `+ 9`
+    _ ≥ 12 * n ^ 4 + 24 * n ^ 2 + 7 := by extra -- get rid of `2 * n ^ 6`
     _ = 12 * n ^ 4 + 22 * n ^ 2 + 2 * n ^ 2 + 7 := by ring
-    _ ≥ 12 * n ^ 4 + 2 * n ^ 2 + 7 := by extra
-    _ ≥ 12 * n ^ 4 + 2 * n + 7 := by rel [h3]
+    _ ≥ 12 * n ^ 4 + 2 * n ^ 2 + 7 := by extra  -- get rid of `22 * n ^ 2`
+    _ ≥ 12 * n ^ 4 + 2 * n + 7 := by rel [h1]
     _ = 11 * n ^ 4 + n^ 4 + 2 * n + 7 := by ring
-    _ ≥ n ^ 4 + 2 * n + 7 := by extra
-    _ ≥ n ^ 3 + 2 * n + 7 := by rel [h4]
+    _ ≥ n ^ 4 + 2 * n + 7 := by extra -- get rid of `11 * n ^ 4`
+    _ ≥ n ^ 3 + 2 * n + 7 := by rel [h2]
     _ = n * (n ^ 2 + 2) + 7 := by ring
-  -- sorry
 
 -- Exercise 2.5.9.9.
 example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
