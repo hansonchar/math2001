@@ -79,12 +79,12 @@ example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
 example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
   use (p + q) / 2 -- ⊢ p < (p + q) / 2 ∧ (p + q) / 2 < q
   constructor
-  calc  -- ⊢ p < (p + q) / 2
-    p = (p + p) / 2 := by ring
-    _ < (p + q) / 2 := by rel [h]
-  calc  -- ⊢ (p + q) / 2 < q
-    (p + q) / 2 < (q + q) / 2 := by rel [h]
-    _ = q := by ring
+  . calc  -- ⊢ p < (p + q) / 2
+      p = (p + p) / 2 := by ring
+      _ < (p + q) / 2 := by rel [h]
+  . calc  -- ⊢ (p + q) / 2 < q
+      (p + q) / 2 < (q + q) / 2 := by rel [h]
+      _ = q := by ring
 
 /-!
   ### 2.5.8. Example
@@ -130,67 +130,65 @@ example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
   obtain hx | hx := le_or_gt x 0
   -- First case. hx: x ≤ 0
-  use x - 1
-  have hx' : -x ≥ 0 := by addarith [hx]
-  have hxx : -x ≥ x := by
+  . use x - 1
+    have hx' : -x ≥ 0 := by addarith [hx]
+    have hxx : -x ≥ x := by
+      calc
+        -x = -x := by rfl
+        _ ≥ 0 := hx'
+        _ ≥ x := hx
+
+    -- We introduce the next hypothesis so that, later on, we can turn `-x` into `p`, a form without
+    -- the minus sign. This led to breaking through the barrier of using `extra`, which in addition
+    -- requires the existence of a hypothesis that `p ≥ 0`.
+    have P : ∃ p, p = -x
+    use -x
+    rfl
+
+    obtain ⟨p, hpx⟩ := P -- hpx: p = -x
+    have hxp : -x = p := by addarith [hpx]
+    have hpz : p ≥ 0 := by
+      calc
+        p = -x := hpx
+        _ ≥ 0 := hx'
     calc
-      -x = -x := by rfl
-      _ ≥ 0 := hx'
-      _ ≥ x := hx
-
-  -- We introduce the next hypothesis so that, later on, we can turn `-x` into `p`, a form without
-  -- the minus sign. This led to breaking through the barrier of using `extra`, which in addition
-  -- requires the existence of a hypothesis that `p ≥ 0`.
-  have P : ∃ p, p = -x
-  use -x
-  rfl
-
-  obtain ⟨p, hpx⟩ := P -- hpx: p = -x
-  have hxp : -x = p := by addarith [hpx]
-  have hpz : p ≥ 0 := by
-    calc
-      p = -x := hpx
-      _ ≥ 0 := hx'
-  calc
-    (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
-    _ = x^2 + p + p + 1 := by rw [hxp]  -- work.
-    _ ≥ p + 1 := by extra -- implicitly makes use of `hpz`
-    _ > p := by extra
-    _ = -x := by rw [hpx]
-    _ ≥ x := by rel [hxx]
-
+      (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
+      _ = x^2 + p + p + 1 := by rw [hxp]  -- work.
+      _ ≥ p + 1 := by extra -- implicitly makes use of `hpz`
+      _ > p := by extra
+      _ = -x := by rw [hpx]
+      _ ≥ x := by rel [hxx]
   -- Second case. hx: x > 0
-  use x + 1
-  calc
-    (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
-    _ > x ^ 2 + x + x := by extra
-    _ ≥ x := by extra
+  . use x + 1
+    calc
+      (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
+      _ > x ^ 2 + x + x := by extra
+      _ ≥ x := by extra
 
 -- Alternatively, we don't need to introduce `p`:
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
   obtain hx | hx := le_or_gt x 0
   -- First case. hx: x ≤ 0
-  use x - 1
-  have hx' : -x ≥ 0 := by addarith [hx]
-  have hxx : -x ≥ x := by
+  . use x - 1
+    have hx' : -x ≥ 0 := by addarith [hx]
+    have hxx : -x ≥ x := by
+      calc
+        -x = -x := by rfl
+        _ ≥ 0 := hx'
+        _ ≥ x := hx
     calc
-      -x = -x := by rfl
-      _ ≥ 0 := hx'
-      _ ≥ x := hx
-  calc
-    (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
-    _ ≥ x^2 + (-x) + 0 + 1 := by rel [hx']  -- work.
-    _ = x^2 + (-x) + 1 := by ring
-    _ ≥ (-x) + 1 := by extra
-    _ > -x := by extra
-    _ ≥ x := by rel [hxx]
-
+      (x - 1) ^ 2 = x ^ 2 + (-x) + (-x) + 1 := by ring -- it has to be `+ (-x)` for the next step to
+      _ ≥ x^2 + (-x) + 0 + 1 := by rel [hx']  -- work.
+      _ = x^2 + (-x) + 1 := by ring
+      _ ≥ (-x) + 1 := by extra
+      _ > -x := by extra
+      _ ≥ x := by rel [hxx]
   -- Second case. hx: x > 0
-  use x + 1
-  calc
-    (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
-    _ > x ^ 2 + x + x := by extra
-    _ ≥ x := by extra
+  . use x + 1
+    calc
+      (x + 1)^2 = x ^ 2 + x + x + 1 := by ring
+      _ > x ^ 2 + x + x := by extra
+      _ ≥ x := by extra
 
 -- https://leanprover.zulipchat.com/#narrow/channel/113488-general/topic/Example.201.2E4.2E6.20of.20The.20Mechanics.20of.20Proof/near/527103874
 -- Experiments on `extra`.
@@ -407,7 +405,22 @@ example {p q : ℝ} (hp : 0 < p * q) (hq : q = 0) : p > 0 := by
 
 -- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
-  sorry
+  obtain ⟨a, ha⟩ := h
+  have H := le_or_gt a 2 -- H : a ≤ 5 ∨ a > 5
+  obtain h1 | h2 := H
+  -- h1 : a ≤ 2
+  . apply ne_of_lt  -- ⊢ m < 5
+    calc
+      m = 2 * a := by addarith [ha]
+      _ ≤ 2 * 2 := by rel [h1]
+      _ < 5 := by numbers
+  -- h2 : a > 2
+  . apply ne_of_gt  -- ⊢ m > 5
+    have h3 : a ≥ 3 := by addarith [h2]
+    calc
+      m = 2 * a := by addarith [ha]
+      _ ≥ 2 * 3 := by rel [h3]
+      _ = 6 := by numbers -- Note `m ≥ 6` satisfies `⊢ m > 5`.
 
 -- Exercise 2.5.9.8.
 example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
