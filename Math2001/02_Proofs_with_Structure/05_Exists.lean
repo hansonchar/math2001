@@ -281,6 +281,8 @@ example {t : ℝ} (h1 : 0 < t) (h2 : 0 = t) : -1 = 1 := by
 -- example {t : ℝ} (h1 : (t - 1) * 0 ≠ (t - 1) * 0) : -1 = 1 := by contradiction
 
 -- Exercise 2.5.9.6.
+-- First attemptm, making use of `lt_trichotomy`, and `contradiction`,
+-- both have not yet been introduced.
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   obtain ⟨x, hxt⟩ := h         -- hx: x * t + 1 < x + t
   have hxt1 : 0 < x + t - x * t - 1 := by addarith [hxt]
@@ -346,6 +348,47 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   have h1 : 0 < x - 1 := by addarith [xgt1]
   have h2 : 0 < (1 - t) := by cancel (x - 1) at hxt3
   addarith [h2]
+
+-- Second attempt on Exercise 2.5.9.6, using only what we've learned here so far.
+example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
+  obtain ⟨s, hst⟩ := h         -- hx: s * t + 1 < s + t
+  have hst1 : 0 < s + t - s * t - 1 := by addarith [hst]
+  have hst2 : 0 < (t - 1) * (1 - s) := by
+    calc
+      0 < s + t - s * t - 1 := hst1
+      _ = (t - 1) * (1 - s) := by ring
+  have hst3 : 0 < (1 - t) * (s - 1) := by
+    calc
+      0 < s + t - s * t - 1 := hst1
+      _ = (1 - t) * (s - 1) := by ring
+  -- Split into two main cases.
+  have H := le_or_gt (1 - s) (t - 1)
+  obtain h1 | h1 := H
+  -- Case 1. h1: 1 - s ≤ t - 1
+  . have S := le_or_gt (1 - s) 0
+  -- Within the first case, we further split into two cases.
+    obtain h2 | h2 := S
+    -- Case 1.1. h2: 1 - s ≤ 0
+    . have h3 : s - 1 ≥ 0 := by addarith [h2] -- used implicitly in `cancel`
+      have h4 : 0 < 1 - t := by cancel (s - 1) at hst3
+      apply ne_of_lt  -- ⊢ t < 1
+      addarith [h4]
+    -- Case 1.2. h2: 1 - s > 0
+    . have h3 : 0 < t - 1 := by cancel (1 - s) at hst2
+      apply ne_of_gt
+      addarith [h3]
+  -- Case 2. h1: 1 - s > t - 1
+  . have S := le_or_gt (1 - s) 0
+    obtain h2 | h2 := S
+    -- Case 2.1. h2: 1 - s ≤ 0
+    . have h3 : s - 1 ≥ 0 := by addarith [h2] -- used implicitly in `cancel`
+      have h4 : 0 < 1 - t := by cancel (s - 1) at hst3
+      apply ne_of_lt
+      addarith [h4]
+    -- Case 2.2. h2: 1 - s > 0
+    . have h3 : 0 < t - 1 := by cancel (1 - s) at hst2
+      apply ne_of_gt
+      addarith [h3]
 
 -- Exercise 2.5.9.7.
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
