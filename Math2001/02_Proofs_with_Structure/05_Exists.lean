@@ -469,7 +469,112 @@ example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
     _ ≥ n ^ 3 + 2 * n + 7 := by rel [h2]
     _ = n * (n ^ 2 + 2) + 7 := by ring
 
+-- Nice!
+example {n : ℝ} (h1: n ≥ 0) (h2 : n ≤ 0): n = 0 := by addarith [h1, h2]
+-- example {n : ℝ} (h1: 2 * n ≥ n) (h2 : 2 * n ≤ n): n = 0 := by addarith [h1, h2]
+
+example {n : ℝ} (h : 2 * n ≥ n) : n ≥ 0 := by
+  have H := le_or_gt n 0
+  obtain hn | hn := H
+  -- hn: n ≤ 0
+  . calc
+      n = 2 * n - n := by ring
+      _ ≥ n - n := by rel [h]
+      _ = 0 := by ring
+  -- hn: n > 0
+  . addarith [hn]
+
+example {a b c : ℝ} (h : 2 * (a+b+c) ≥ (a+b+c)) : (a+b+c) ≥ 0 := by
+  have H := le_or_gt (a+b+c) 0
+  obtain hn | hn := H
+  -- hn: n ≤ 0
+  . calc
+      (a+b+c) = 2 * (a+b+c) - (a+b+c) := by ring
+      _ ≥ (a+b+c) - (a+b+c) := by rel [h]
+      _ = 0 := by ring
+  -- hn: n > 0
+  . addarith [hn]
+
+-- Exercise 2.5.9.9.
+-- example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
+--     ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
+--   have h1 : a + b + c ≤ 2 * (a + b + c) := by
+--     calc
+--       a + b + c ≤ (b + c) + (a + c) + (a + b) := by rel [ha, hb, hc]
+--       _ = 2 * (a + b + c) := by ring
+--   have h2 : 2 * (a + b + c) ≥ a + b + c := by addarith [h1]
+--   have h3 : a + b + c ≥ 0 := by
+--     have H := le_or_gt (a + b + c) 0-- ⊢ a + b + c ≥ 0
+--     obtain h4 | h4 := H
+--     . have h4' : -(a + b + c) ≥ 0 := by addarith [h4]
+--       calc
+--         a + b + c = -1 * -(a + b + c) := by ring
+--         _ ≤ -1 * 0 := by rel [h4']
+--   sorry
+
 -- Exercise 2.5.9.9.
 example {a b c : ℝ} (ha : a ≤ b + c) (hb : b ≤ a + c) (hc : c ≤ a + b) :
     ∃ x y z, x ≥ 0 ∧ y ≥ 0 ∧ z ≥ 0 ∧ a = y + z ∧ b = x + z ∧ c = x + y := by
+  use b + c, a + c, a + b
+  have h1 : a + b + c ≤ 2 * (a + b + c) := by
+    calc
+      a + b + c ≤ (b + c) + (a + c) + (a + b) := by rel [ha, hb, hc]
+      _ = 2 * (a + b + c) := by ring
+  have h2 : a + b + c ≥ 0 := by
+    have H := le_or_gt (a + b + c) 0
+    obtain h | h := H
+    -- h: a + b + c ≤ 0
+    . calc
+        (a + b + c) = 2 * (a + b + c) - (a + b + c) := by ring
+        _ ≥ (a + b + c) - (a + b + c) := by rel [h1]
+        _ = 0 := by ring
+    -- h: a + b + c > 0
+    . addarith [h]
+  constructor
+  -- ⊢ b + c ≥ 0
+  . have H := le_or_gt a 0
+    obtain h | h := H
+    -- h: a ≤ 0
+    . have h' : -a ≥ 0 := by addarith [h]
+      calc
+        b + c = a + b + c - a := by ring
+        _ ≥ 0 - a := by rel [h2]
+        _ = -a := by ring
+        _ ≥ 0 := by rel [h']
+    -- ⊢ a > 0
+    . calc
+        b + c ≥ a := by addarith [ha]
+        _ ≥ 0 := by rel [h]
+  constructor
+  -- ⊢ a + c ≥ 0
+  . have H := le_or_gt b 0
+    obtain h | h := H
+    -- h: b ≤ 0
+    . have h' : -b ≥ 0 := by addarith [h]
+      calc
+        a + c = a + b + c - b := by ring
+        _ ≥ 0 - b := by rel [h2]
+        _ = -b := by ring
+        _ ≥ 0 := by rel [h']
+    -- ⊢ b > 0
+    . calc
+        a + c ≥ b := by addarith [hb]
+        _ ≥ 0 := by rel [h]
+  constructor
+  -- ⊢ a + b ≥ 0
+  . have H := le_or_gt c 0
+    obtain h | h := H
+    -- h: c ≤ 0
+    . have h' : -c ≥ 0 := by addarith [h]
+      calc
+        a + b = a + b + c - c := by ring
+        _ ≥ 0 - c := by rel [h2]
+        _ = -c := by ring
+        _ ≥ 0 := by rel [h']
+    -- ⊢ c > 0
+    . calc
+        a + b ≥ c := by addarith [hc]
+        _ ≥ 0 := by rel [h]
+  constructor
+  -- a = a + c + (a + b)
   sorry
