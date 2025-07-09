@@ -15,6 +15,7 @@ open Int
   ### 3.1.1. Example
 -/
 example : Odd (7 : ℤ) := by
+  -- `dsimp` makes things clearer, but is not necessary.
   dsimp [Odd] -- ⊢ ∃ k, 7 = 2 * k + 1
   use 3
   numbers
@@ -32,7 +33,9 @@ example : Odd (-3 : ℤ) := by
 -/
 example {n : ℤ} (hn : Odd n) : Odd (3 * n + 2) := by
   dsimp [Odd] at *  -- the `dsimp` line is not actually needed
+  -- Any hypothesis that is odd or even needs to be converted via obtain.
   obtain ⟨k, hk⟩ := hn
+  -- A goal with Odd or Even amounts to having an ∃, so a 'use' tactic follows.
   use 3 * k + 2
   calc
     3 * n + 2 = 3 * (2 * k + 1) + 2 := by rw [hk]
@@ -78,7 +81,16 @@ example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x * y + 2 * y) := by
   ### 3.1.7. Example
 -/
 example {m : ℤ} (hm : Odd m) : Even (3 * m - 5) := by
-  sorry
+  obtain ⟨k, hk⟩ := hm -- hk: 2 * k + 1
+  /-
+    Now that we have hk, we can substitute it to the goal, (3 * m - 5).
+    Then use some x such that 2 * x would be equal to the goal.
+  -/
+  use 3 * k - 1
+  -- ⊢ 3 * m - 5 = 2 * (3 * k - 1)
+  calc
+    3 * m - 5 = 3 * (2 * k + 1) - 5 := by rw [hk]
+    _ = 2 * (3 * k - 1) := by ring
 
 /-!
   ### 3.1.8. Example
