@@ -245,7 +245,26 @@ example (n : ℤ) : Odd (3 * n ^ 2 + 3 * n - 1) := by
 
 -- Exercise 3.1.10.13
 example (n : ℤ) : ∃ m ≥ n, Odd m := by
-  sorry
+  obtain hn | hn := Int.even_or_odd n
+  -- hn : Even n
+  -- ⊢ ∃ m ≥ n, Odd m
+  . use n + 1
+    constructor
+    -- ⊢ n + 1 ≥ n
+    . extra
+    -- ⊢ Odd (n + 1)
+    . obtain ⟨m, hm⟩ := hn  -- hm : n = 2 * m
+      use m
+      rw [hm]
+  -- hn : Odd n
+  -- ⊢ ∃ m ≥ n, Odd m
+  . use n
+    constructor
+    -- n ≥ n
+    . rfl
+    -- Odd n
+    . exact hn
+
 -- Exercise 3.1.10.14
 example (a b c : ℤ) : Even (a - b) ∨ Even (a + c) ∨ Even (b - c) := by
   sorry
