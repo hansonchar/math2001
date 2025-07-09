@@ -208,15 +208,40 @@ example {a : ℤ} (ha : Odd a) : Odd (a ^ 2 + 2 * a - 4) := by
 
 -- Exercise 3.1.10.10
 example {p : ℤ} (hp : Odd p) : Odd (p ^ 2 + 3 * p - 5) := by
-  sorry
+  obtain ⟨q, hq⟩ := hp
+  use 2 * q ^ 2 + 5 * q - 1
+  -- ⊢ 4 * q ^ 2 + 4 * q + 1 * 6 * q - 2 = 2 * (2 * q ^ 2 + 5 * q - 1) + 1
+  calc
+    p ^ 2 + 3 * p - 5 = (2 * q + 1) ^ 2 + 3 * (2 * q + 1) - 5 := by rw [hq]
+    _ = 2 * (2 * q ^ 2 + 5 * q - 1) + 1 := by ring
 
 -- Exercise 3.1.10.11
 example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x * y) := by
-  sorry
+  obtain ⟨p, hp⟩ := hx
+  obtain ⟨q, hq⟩ := hy
+  use 2 * p * q + p + q
+  -- ⊢ 4 * p * q + 2 * p + 2 * q + 1 = 2 * (2 * p * q + p + q) + 1
+  calc
+    x * y = (2 * p + 1) * (2 * q + 1) := by rw [hp, hq]
+    _ = 2 * (2 * p * q + p + q) + 1 := by ring
 
 -- Exercise 3.1.10.12
 example (n : ℤ) : Odd (3 * n ^ 2 + 3 * n - 1) := by
-  sorry
+  obtain hn | hn := Int.even_or_odd n
+  -- hn : Even n
+  -- ⊢ Odd (3 * n ^ 2 + 3 * n - 1)
+  . obtain ⟨m, hm⟩ := hn
+    use 6 * m ^ 2 + 3 * m - 1
+    calc
+      3 * n ^ 2 + 3 * n - 1 = 3 * (2 * m) ^ 2 + 3 * (2 * m) - 1 := by rw [hm]
+      _ = 2 * (6 * m ^ 2 + 3 * m - 1) + 1 := by ring
+  -- hn : Odd n
+  -- ⊢ Odd (3 * n ^ 2 + 3 * n - 1)
+  . obtain ⟨m, hm⟩ := hn
+    use 6 * m ^ 2 + 9 * m + 2
+    calc
+      3 * n ^ 2 + 3 * n - 1 = 3 * (2 * m + 1) ^ 2 + 3 * (2 * m + 1) - 1 := by rw [hm]
+      _ = 2 * (6 * m ^ 2 + 9 * m + 2) + 1 := by ring
 
 -- Exercise 3.1.10.13
 example (n : ℤ) : ∃ m ≥ n, Odd m := by
