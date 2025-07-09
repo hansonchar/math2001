@@ -147,19 +147,40 @@ example {m n : ℤ} (hm : Odd m) (hn : Even n) : Odd (n + m) := by
 
 -- Exercise 3.1.10.4
 example {p q : ℤ} (hp : Odd p) (hq : Even q) : Odd (p - q - 4) := by
-  sorry
+  obtain ⟨r, hr⟩ := hp
+  obtain ⟨s, hs⟩ := hq
+  use r - s - 2
+  calc
+    p - q - 4 = 2 * r + 1 - 2 * s - 4 := by rw [hr, hs]
+    _ = 2 * (r - s - 2) + 1 := by ring
 
 -- Exercise 3.1.10.5
 example {a b : ℤ} (ha : Even a) (hb : Odd b) : Even (3 * a + b - 3) := by
-  sorry
+  obtain ⟨c, hc⟩ := ha
+  obtain ⟨d, hd⟩ := hb
+  use 3 * c + d - 1
+  -- ⊢ 3 * a + b - 3 = 2 * (3 * c + d - 1)
+  calc
+    3 * a + b - 3 = 3 * (2 * c) + (2 * d + 1) - 3 := by rw [hc, hd]
+    _ = 2 * (3 * c + d - 1) := by ring
 
 -- Exercise 3.1.10.6
 example {r s : ℤ} (hr : Odd r) (hs : Odd s) : Even (3 * r - 5 * s) := by
-  sorry
+  obtain ⟨p, hp⟩ := hr
+  obtain ⟨q, hq⟩ := hs
+  use 3 * p - 5 * q - 1
+  calc
+    3 * r - 5 * s = 3 * (2 * p + 1) - 5 * (2 * q + 1) := by rw [hp, hq]
+    _ = 2 * (3 * p - 5 * q - 1) := by ring
 
 -- Exercise 3.1.10.7
 example {x : ℤ} (hx : Odd x) : Odd (x ^ 3) := by
-  sorry
+  obtain ⟨y, hy⟩ := hx
+  use 4 * y ^ 3 + 6 * y ^ 2 + 3 * y
+  -- ⊢ x ^ 3 = 2 * (4 * y ^ 3 + 6 * y ^ 2 + 3 * y) + 1
+  calc
+    x ^ 3 = (2 * y + 1) ^ 3 := by rw [hy]
+    _ = 2 * (4 * y ^ 3 + 6 * y ^ 2 + 3 * y) + 1 := by ring
 
 -- Exercise 3.1.10.8
 example {n : ℤ} (hn : Odd n) : Even (n ^ 2 - 3 * n + 2) := by
