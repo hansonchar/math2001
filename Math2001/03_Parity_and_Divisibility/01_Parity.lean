@@ -104,6 +104,11 @@ example {n : ℤ} (hn : Even n) : Odd (n ^ 2 + 2 * n - 5) := by
 
 /-!
   ### 3.1.9. Example
+
+  In fact every integer is either even or odd;
+  we will discuss how to prove this later, in Example 4.2.9.
+
+  In Lean this fact can be invoked as the lemma `Int.even_or_odd`.
 -/
 example (n : ℤ) : Even (n ^ 2 + n + 4) := by
   obtain hn | hn := Int.even_or_odd n
@@ -118,59 +123,67 @@ example (n : ℤ) : Even (n ^ 2 + n + 4) := by
       n ^ 2 + n + 4 = (2 * x + 1) ^ 2 + (2 * x + 1) + 4 := by rw [hx]
       _ = 2 * (2 * x ^ 2 + 3 * x + 3) := by ring
 
-/-! ### Exercises 3.1.10. -/
+/-! ### Exercise 3.1.10. -/
 
--- Exercises 3.1.10.1
+-- Exercise 3.1.10.1
 example : Odd (-9 : ℤ) := by
-  sorry
+  use -5
+  numbers
 
--- Exercises 3.1.10.2
+-- Exercise 3.1.10.2
 example : Even (26 : ℤ) := by
-  sorry
+  use 13
+  numbers
 
--- Exercises 3.1.10.3
+-- Exercise 3.1.10.3
 example {m n : ℤ} (hm : Odd m) (hn : Even n) : Odd (n + m) := by
-  sorry
+  obtain ⟨x, hx⟩ := hm
+  obtain ⟨y, hy⟩ := hn
+  use x + y
+  -- ⊢ n + m = 2 * (x + y) + 1
+  calc
+    n + m = 2 * y + (2 * x + 1) := by rw [hy, hx] -- watch that bracket!
+    _ = 2 * (x + y) + 1 := by ring
 
--- Exercises 3.1.10.4
+-- Exercise 3.1.10.4
 example {p q : ℤ} (hp : Odd p) (hq : Even q) : Odd (p - q - 4) := by
   sorry
 
--- Exercises 3.1.10.5
+-- Exercise 3.1.10.5
 example {a b : ℤ} (ha : Even a) (hb : Odd b) : Even (3 * a + b - 3) := by
   sorry
 
--- Exercises 3.1.10.6
+-- Exercise 3.1.10.6
 example {r s : ℤ} (hr : Odd r) (hs : Odd s) : Even (3 * r - 5 * s) := by
   sorry
 
--- Exercises 3.1.10.7
+-- Exercise 3.1.10.7
 example {x : ℤ} (hx : Odd x) : Odd (x ^ 3) := by
   sorry
 
--- Exercises 3.1.10.8
+-- Exercise 3.1.10.8
 example {n : ℤ} (hn : Odd n) : Even (n ^ 2 - 3 * n + 2) := by
   sorry
 
--- Exercises 3.1.10.9
+-- Exercise 3.1.10.9
 example {a : ℤ} (ha : Odd a) : Odd (a ^ 2 + 2 * a - 4) := by
   sorry
 
--- Exercises 3.1.10.10
+-- Exercise 3.1.10.10
 example {p : ℤ} (hp : Odd p) : Odd (p ^ 2 + 3 * p - 5) := by
   sorry
 
--- Exercises 3.1.10.11
+-- Exercise 3.1.10.11
 example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x * y) := by
   sorry
 
--- Exercises 3.1.10.12
+-- Exercise 3.1.10.12
 example (n : ℤ) : Odd (3 * n ^ 2 + 3 * n - 1) := by
   sorry
 
--- Exercises 3.1.10.13
+-- Exercise 3.1.10.13
 example (n : ℤ) : ∃ m ≥ n, Odd m := by
   sorry
--- Exercises 3.1.10.14
+-- Exercise 3.1.10.14
 example (a b c : ℤ) : Even (a - b) ∨ Even (a + c) ∨ Even (b - c) := by
   sorry
