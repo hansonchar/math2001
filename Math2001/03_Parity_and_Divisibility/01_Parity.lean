@@ -182,13 +182,29 @@ example {x : ℤ} (hx : Odd x) : Odd (x ^ 3) := by
     x ^ 3 = (2 * y + 1) ^ 3 := by rw [hy]
     _ = 2 * (4 * y ^ 3 + 6 * y ^ 2 + 3 * y) + 1 := by ring
 
--- Exercise 3.1.10.8
+/-!
+  Exercise 3.1.10.8
+
+  Easiest route is to
+  1. Apply `obtain` to all Odd or Even hypothesis.
+  2. Delay specifying `use`, but do the calculation first to figure out the pattern; and then
+  3. Specify the `use`, and then simplify the calculation after `rw` to a single step of `ring`.
+-/
 example {n : ℤ} (hn : Odd n) : Even (n ^ 2 - 3 * n + 2) := by
-  sorry
+  obtain ⟨m, hm⟩ := hn
+  use 2 * m ^ 2 + 2 * m - 3 * m
+  -- ⊢ n ^ 2 - 3 * n + 2 = 2 * (2 * m ^ 2 + 2 * m - 3 * m)
+  calc
+    n ^ 2 - 3 * n + 2 = (2 * m + 1) ^ 2 - 3 * (2 * m + 1) + 2 := by rw [hm]
+    _ = 2 * (2 * m ^ 2 + 2 * m - 3 * m) := by ring
 
 -- Exercise 3.1.10.9
 example {a : ℤ} (ha : Odd a) : Odd (a ^ 2 + 2 * a - 4) := by
-  sorry
+  obtain ⟨b, hb⟩ := ha
+  use 2 * b ^ 2 + 4 * b - 1
+  calc
+    a ^ 2 + 2 * a - 4 = (2 * b + 1) ^ 2 + 2 * (2 * b + 1) - 4 := by rw [hb]
+    _ = 2 * (2 * b ^ 2 + 4 * b - 1) + 1 := by ring
 
 -- Exercise 3.1.10.10
 example {p : ℤ} (hp : Odd p) : Odd (p ^ 2 + 3 * p - 5) := by
