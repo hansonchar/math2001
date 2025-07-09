@@ -5,28 +5,55 @@ math2001_init
 
 open Int
 
+/-!
+  # 3. [Parity and divisibility](https://hrmacbeth.github.io/math2001/03_Parity_and_Divisibility.html)
 
+  ## 3.1. Definitions; parity
+-/
+
+/-!
+  ### 3.1.1. Example
+-/
 example : Odd (7 : ℤ) := by
-  dsimp [Odd]
+  dsimp [Odd] -- ⊢ ∃ k, 7 = 2 * k + 1
   use 3
   numbers
 
-
+/-!
+  ### 3.1.2. Example
+-/
 example : Odd (-3 : ℤ) := by
-  sorry
+  dsimp [Odd]
+  use -2
+  numbers
 
+/-!
+  ### 3.1.3. Example
+-/
 example {n : ℤ} (hn : Odd n) : Odd (3 * n + 2) := by
-  dsimp [Odd] at *
+  dsimp [Odd] at *  -- the `dsimp` line is not actually needed
   obtain ⟨k, hk⟩ := hn
   use 3 * k + 2
   calc
     3 * n + 2 = 3 * (2 * k + 1) + 2 := by rw [hk]
     _ = 2 * (3 * k + 2) + 1 := by ring
 
-
+/-!
+  ### 3.1.4. Example
+-/
 example {n : ℤ} (hn : Odd n) : Odd (7 * n - 4) := by
-  sorry
+  dsimp [Odd] at *
+  obtain ⟨k, hk⟩ := hn  -- hk: n = 2 * k + 1
+  -- ⊢ ∃ k, 7 * n - 4 = 2 * k + 1
+  -- Note the variable `k` in the goal is different that in `hk`.
+  use 7 * k + 1
+  calc
+    7 * n - 4 = 7 * (2 * k + 1) - 4 := by rw [hk]
+    _ = 2 * (7 * k + 1) + 1 := by ring
 
+/-!
+  ### 3.1.5. Example
+-/
 example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x + y + 1) := by
   obtain ⟨a, ha⟩ := hx
   obtain ⟨b, hb⟩ := hy
