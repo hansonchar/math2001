@@ -66,7 +66,13 @@ example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x + y + 1) := by
   ### 3.1.6. Example
 -/
 example {x y : ℤ} (hx : Odd x) (hy : Odd y) : Odd (x * y + 2 * y) := by
-  sorry
+  obtain ⟨a, ha⟩ := hx
+  obtain ⟨b, hb⟩ := hy
+  use 2 * a * b + (a + b) + (2 * b + 1)
+  -- ⊢ 4 * a * b + 2 * (a + b) + 2 * (b + 1) + 1 = 2 * (2 * a * b + (a + b) + (2 * b + 1)) + 1
+  calc
+    x * y + 2 * y = (2 * a + 1) * (2 * b + 1) + 2 * (2 * b + 1) := by rw [ha, hb]
+    _ = 2 * (2 * a * b + (a + b) + (2 * b + 1)) + 1 := by ring
 
 /-!
   ### 3.1.7. Example
