@@ -96,7 +96,11 @@ example {m : ℤ} (hm : Odd m) : Even (3 * m - 5) := by
   ### 3.1.8. Example
 -/
 example {n : ℤ} (hn : Even n) : Odd (n ^ 2 + 2 * n - 5) := by
-  sorry
+  obtain ⟨k, hn⟩ := hn
+  use 2 * k ^ 2 + 2 * k - 3
+  calc  -- ⊢ n ^ 2 + 2 * n - 5 = 2 * (2 * k ^ 2 + 2 * k - 3) + 1
+    n ^ 2 + 2 * n - 5 = (2 * k) ^ 2 + 2 * (2 * k) - 5 := by rw [hn]
+    _ = 2 * (2 * k ^ 2 + 2 * k - 3) + 1 := by ring
 
 /-!
   ### 3.1.9. Example
