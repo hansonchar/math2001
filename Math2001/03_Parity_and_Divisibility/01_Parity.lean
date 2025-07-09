@@ -265,6 +265,71 @@ example (n : ℤ) : ∃ m ≥ n, Odd m := by
     -- Odd n
     . exact hn
 
--- Exercise 3.1.10.14
+/-!
+  ### Exercise 3.1.10.14
+
+  Turns out we only need to prove 6 cases instead of 8, since two of the 8 cases are "duplicated",
+  namely, when a, b, c are either all even or all odd.
+-/
 example (a b c : ℤ) : Even (a - b) ∨ Even (a + c) ∨ Even (b - c) := by
-  sorry
+    obtain ha | ha := Int.even_or_odd a
+    -- Even a
+    . obtain hb | hb := Int.even_or_odd b
+      -- Even b
+      . left -- ⊢ Even (a - b)
+        obtain ⟨j, hj⟩ := ha
+        obtain ⟨k, hk⟩ := hb
+        use j - k
+        calc
+          a - b = 2 * j - 2 * k := by rw [hj, hk]
+          _ = 2 * (j - k) := by ring
+      -- Odd b
+      . obtain hc | hc := Int.even_or_odd c
+        -- Even c
+        . right
+          left  -- ⊢ Even (a + c)
+          obtain ⟨j, hj⟩ := ha
+          obtain ⟨k, hk⟩ := hc
+          use j + k
+          calc
+            a + c = 2 * j + 2 * k := by rw [hj, hk]
+            _ = 2 * (j + k) := by ring
+        -- Odd c
+        . right
+          right -- ⊢ Even (b - c)
+          obtain ⟨j, hj⟩ := hb
+          obtain ⟨k, hk⟩ := hc
+          use j - k
+          calc
+            b - c = 2 * j + 1 - (2 * k + 1) := by rw [hj, hk]
+            _ = 2 * (j - k) := by ring
+    -- Odd a
+    . obtain hb | hb := Int.even_or_odd b
+      -- Even b
+      . obtain hc | hc := Int.even_or_odd c
+        -- Even c
+        right
+        right -- ⊢ Even (b - c)
+        obtain ⟨j, hj⟩ := hb
+        obtain ⟨k, hk⟩ := hc
+        use j - k
+        calc
+          b - c = 2 * j - 2 * k := by rw [hj, hk]
+          _ = 2 * (j - k) := by ring
+        -- Odd c
+        . right
+          left  -- ⊢ Even (a + c)
+          obtain ⟨j, hj⟩ := ha
+          obtain ⟨k, hk⟩ := hc
+          use j + k + 1
+          calc
+            a + c = 2 * j + 1 + (2 * k + 1) := by rw [hj, hk]
+            _ = 2 * (j + k + 1) := by ring
+      -- Odd b
+      . left  -- ⊢ Even (a - b)
+        obtain ⟨j, hj⟩ := ha
+        obtain ⟨k, hk⟩ := hb
+        use j - k
+        calc
+          a - b = 2 * j + 1 - (2 * k + 1) := by rw [hj, hk]
+          _ = 2 * (j - k) := by ring
