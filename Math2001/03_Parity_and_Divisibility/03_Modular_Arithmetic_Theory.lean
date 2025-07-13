@@ -187,16 +187,37 @@ example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
 
 -- Exercise 3.3.12.1
 example : 34 ≡ 104 [ZMOD 5] := by
-  sorry
+  use -14
+  calc
+    34 - 104 = 5 * -14 := by ring
 
--- Exercise 3.3.12.2
+/-!
+  #### Exercise 3.3.12.2
+
+  Symmetry rule for modular arithmetic.
+-/
 theorem Int.ModEq.symm (h : a ≡ b [ZMOD n]) : b ≡ a [ZMOD n] := by
-  sorry
+  obtain ⟨x, hx⟩ := h
+  use -x
+  calc
+    b - a = - (a - b) := by ring
+    _ = - (n * x) := by rw [hx]
+    _ = n * (-x) := by ring
 
--- Exercise 3.3.12.3
+/-!
+  #### Exercise 3.3.12.3
+
+  Transitivity rule for modular arithmetic.
+-/
 theorem Int.ModEq.trans (h1 : a ≡ b [ZMOD n]) (h2 : b ≡ c [ZMOD n]) :
     a ≡ c [ZMOD n] := by
-  sorry
+  obtain ⟨x, hx⟩ := h1
+  obtain ⟨y, hy⟩ := h2
+  use x + y
+  calc
+    a - c = a - b + (b - c) := by ring
+    _ = n * x + n * y := by rw [hx, hy]
+    _ = n * (x + y) := by ring
 
 -- Exercise 3.3.12.4
 example : a + n * c ≡ a [ZMOD n] := by
