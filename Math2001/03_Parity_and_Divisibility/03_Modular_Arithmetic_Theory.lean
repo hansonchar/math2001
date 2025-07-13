@@ -6,6 +6,8 @@ math2001_init
 
 /-!
   ## 3.3. Modular arithmetic: theory
+
+  Definition: The integers $a$ and $b$ are congruent modulo $n$, if $n ∣ (a-b)$.
 -/
 
 /-!
@@ -19,10 +21,13 @@ example : 11 ≡ 3 [ZMOD 4] := by
   ### 3.3.2. Example
 -/
 example : -5 ≡ 1 [ZMOD 3] := by
-  sorry
+  use -2
+  numbers
 
 /-!
   ### 3.3.3. Example
+
+  Lemma (addition rule for mudular arithmetric).
 -/
 theorem Int.ModEq.add {n a b c d : ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : c ≡ d [ZMOD n]) :
     a + c ≡ b + d [ZMOD n] := by
@@ -37,19 +42,36 @@ theorem Int.ModEq.add {n a b c d : ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : c ≡ d [Z
 
 /-!
   ### 3.3.4. Exercise
+
+  Lemma (subtraction rule for mudular arithmetric).
 -/
 theorem Int.ModEq.sub {n a b c d : ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : c ≡ d [ZMOD n]) :
     a - c ≡ b - d [ZMOD n] := by
-  sorry
+  obtain ⟨x, hx⟩ := h1
+  obtain ⟨y, hy⟩ := h2
+  use x - y
+  calc
+    a - c - (b - d) = a - b - (c - d) := by ring
+    _ = n * x - n * y := by rw [hx, hy]
+    _ = n * (x - y) := by ring
 
 /-!
   ### 3.3.5. Exercise
+
+  Lemma (negative rule for mudular arithmetric).
 -/
 theorem Int.ModEq.neg {n a b : ℤ} (h1 : a ≡ b [ZMOD n]) : -a ≡ -b [ZMOD n] := by
-  sorry
+  obtain ⟨c, hc⟩ := h1
+  use -c
+  calc
+    -a - -b = -(a - b) := by ring
+    _ = -(n * c) := by rw [hc]
+    _ = n * -c := by ring
 
 /-!
   ### 3.3.6. Example
+
+  Lemma (multiplication rule for mudular arithmetric).
 -/
 theorem Int.ModEq.mul {n a b c d : ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : c ≡ d [ZMOD n]) :
     a * c ≡ b * d [ZMOD n] := by
@@ -62,7 +84,18 @@ theorem Int.ModEq.mul {n a b c d : ℤ} (h1 : a ≡ b [ZMOD n]) (h2 : c ≡ d [Z
     _ = n * (x * c + b * y) := by ring
 
 /-!
+  ### 3.3.7. Example
+
+  Warning: There is no “division rule” for modular arithmetic!
+
+  It is possible to have integers $a, b, c, d$ and $n$ with $a ≡ b mod n$ and $c ≡ d$ mod $n$, but
+  $a/c ¬≡ b/d$ mod $n$.
+-/
+
+/-!
   ### 3.3.8. Example
+
+  Lemma (squaring rule for mudular arithmetric).
 -/
 theorem Int.ModEq.pow_two (h : a ≡ b [ZMOD n]) : a ^ 2 ≡ b ^ 2 [ZMOD n] := by
   obtain ⟨x, hx⟩ := h
