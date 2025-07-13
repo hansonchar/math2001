@@ -69,14 +69,23 @@ example {x : ℤ} : x ^ 3 ≡ x [ZMOD 3] := by
 
 /-! ### 3.4.5. Exercises -/
 
--- Exercise 3.4.5.1
-example {n : ℤ} (hn : n ≡ 1 [ZMOD 3]) : n ^ 3 + 7 * n ≡ 2 [ZMOD 3] :=
-  sorry
+/-!
+  #### Exercise 3.4.5.1
+
+  In contrast to the previous exercises, instead of working from the definitions, we operate at a higher abstraction level, i.e., directly on the equations via modulo arithmetic, or so to speak.  Thanks to the `rel` tactic, etc.
+-/
+example {n : ℤ} (hn : n ≡ 1 [ZMOD 3]) : n ^ 3 + 7 * n ≡ 2 [ZMOD 3] := by
+  calc
+    n ^ 3 + 7 * n ≡ 1 ^ 3 + 7 * 1 [ZMOD 3] := by rel [hn]
+    _ = 2 + 3 * 2 := by numbers
+    _ ≡ 2 [ZMOD 3] := by extra
 
 -- Exercise 3.4.5.2
-example {a : ℤ} (ha : a ≡ 3 [ZMOD 4]) :
-    a ^ 3 + 4 * a ^ 2 + 2 ≡ 1 [ZMOD 4] :=
-  sorry
+example {a : ℤ} (ha : a ≡ 3 [ZMOD 4]) : a ^ 3 + 4 * a ^ 2 + 2 ≡ 1 [ZMOD 4] := by
+  calc
+    a ^ 3 + 4 * a ^ 2 + 2 ≡ 3 ^ 3 + 4 * 3 ^ 2 + 2 [ZMOD 4] := by rel [ha]
+    _ = 1 + 4 * 16 := by numbers
+    _ ≡ 1 [ZMOD 4] := by extra
 
 -- Exercise 3.4.5.3
 example (a b : ℤ) : (a + b) ^ 3 ≡ a ^ 3 + b ^ 3 [ZMOD 3] :=
