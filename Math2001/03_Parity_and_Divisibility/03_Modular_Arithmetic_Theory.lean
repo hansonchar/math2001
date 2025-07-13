@@ -221,18 +221,34 @@ theorem Int.ModEq.trans (h1 : a ≡ b [ZMOD n]) (h2 : b ≡ c [ZMOD n]) :
 
 -- Exercise 3.3.12.4
 example : a + n * c ≡ a [ZMOD n] := by
-  sorry
-
+  use c
+  calc
+    a + n * c - a = n * c := by ring
 
 -- Exercise 3.3.12.6
 example {a b : ℤ} (h : a ≡ b [ZMOD 5]) : 2 * a + 3 ≡ 2 * b + 3 [ZMOD 5] := by
-  sorry
+  apply Int.ModEq.add
+  . apply Int.ModEq.mul
+    . apply Int.ModEq.refl
+    . apply h
+  . apply Int.ModEq.refl
 
 -- Exercise 3.3.12.7
 example {m n : ℤ} (h : m ≡ n [ZMOD 4]) : 3 * m - 1 ≡ 3 * n - 1 [ZMOD 4] := by
-  sorry
+  apply Int.ModEq.sub
+  . apply Int.ModEq.mul
+    . apply Int.ModEq.refl
+    . apply h
+  . apply Int.ModEq.refl
 
 -- Exercise 3.3.12.8
 example {k : ℤ} (hb : k ≡ 3 [ZMOD 5]) :
     4 * k + k ^ 3 + 3 ≡ 4 * 3 + 3 ^ 3 + 3 [ZMOD 5] := by
-  sorry
+  apply Int.ModEq.add
+  apply Int.ModEq.add
+  apply Int.ModEq.mul
+  apply Int.ModEq.refl
+  apply hb
+  apply Int.ModEq.pow_three
+  apply hb
+  apply Int.ModEq.refl
