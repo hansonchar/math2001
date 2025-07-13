@@ -111,12 +111,21 @@ theorem Int.ModEq.pow_two (h : a ≡ b [ZMOD n]) : a ^ 2 ≡ b ^ 2 [ZMOD n] := b
   Cubing rule for modular arithmetic.
 -/
 theorem Int.ModEq.pow_three (h : a ≡ b [ZMOD n]) : a ^ 3 ≡ b ^ 3 [ZMOD n] := by
-  sorry
+  obtain ⟨x, hx⟩ := h
+  use x * (a ^ 2 + a * b + b ^ 2)
+  calc
+    a ^ 3 - b ^ 3 = (a - b) * (a ^ 2 + a * b + b ^ 2) := by ring
+    _ = n * x * (a ^ 2 + a * b + b ^ 2) := by rw [hx]
+    _ = n * (x * (a ^ 2 + a * b + b ^ 2)) := by ring
 
 /-!
   Power fule for modular arithmetic.
+
+  In fact the same is true for any power, although we don’t yet have the tools to prove it.
+  We’ll come back to this later in the book, in Example 6.1.3.
 -/
-theorem Int.ModEq.pow (k : ℕ) (h : a ≡ b [ZMOD n]) : a ^ k ≡ b ^ k [ZMOD n] :=
+theorem Int.ModEq.pow (k : ℕ) (h : a ≡ b [ZMOD n]) : a ^ k ≡ b ^ k [ZMOD n] := by
+  obtain ⟨x, hx⟩ := h
   sorry -- we'll prove this later in the book
 
 /-!
@@ -127,7 +136,6 @@ theorem Int.ModEq.pow (k : ℕ) (h : a ≡ b [ZMOD n]) : a ^ k ≡ b ^ k [ZMOD n
 theorem Int.ModEq.refl (a : ℤ) : a ≡ a [ZMOD n] := by
   use 0
   ring
-
 
 /-!
   ### 3.3.11. Example
