@@ -35,16 +35,28 @@ example {a b : ℤ} (hab : a ∣ b) : a ∣ b ^ 2 + 2 * b := by
   ### 3.2.4. Example
 -/
 example {a b c : ℕ} (hab : a ∣ b) (hbc : b ^ 2 ∣ c) : a ^ 2 ∣ c := by
-  sorry
+  obtain ⟨x, hx⟩ := hab
+  obtain ⟨y, hy⟩ := hbc
+  use x ^ 2 * y
+  calc
+    c = b ^ 2 * y := hy
+    _ = (a * x) ^ 2 * y := by rw [hx]
+    _ = a ^ 2 * (x ^ 2 * y) := by ring
 
 /-!
   ### 3.2.5. Example
 -/
 example {x y z : ℕ} (h : x * y ∣ z) : x ∣ z := by
-  sorry
+  obtain ⟨t, ht⟩ := h
+  use y * t
+  calc
+    z = x * y * t := ht
+    _ = x * (y * t) := by ring
 
 /-!
   ### 3.2.6. Example
+
+  You might wonder how to show that a number is not divisible by another number. A convenient test here is a theorem which we will prove later in the book, in Example 4.5.8: if an integer $a$ is strictly between two consecutive multiples of an integer $b$, then it is not a multiple of $b$. More formally, if there exists an integer $q$ such that $bq < a < b(q+1)$, then $a$ is not a multiple of $b$. Here is an example applying this test:
 -/
 example : ¬(5 : ℤ) ∣ 12 := by
   apply Int.not_dvd_of_exists_lt_and_lt
