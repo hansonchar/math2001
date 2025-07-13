@@ -147,11 +147,23 @@ example {k l m : ℤ} (h1 : k ∣ l) (h2 : l ^ 3 ∣ m) : k ^ 3 ∣ m := by
 
 -- Exercise 3.2.9.7
 example {p q r : ℤ} (hpq : p ^ 3 ∣ q) (hqr : q ^ 2 ∣ r) : p ^ 6 ∣ r := by
-  sorry
+  obtain ⟨x, hx⟩ := hpq
+  obtain ⟨y, hy⟩ := hqr
+  use x ^ 2 * y
+  calc
+    r = q ^ 2 * y := hy
+    _ = (p ^ 3 * x) ^ 2 * y := by rw [hx]
+    _ = p ^ 6 * (x ^ 2 * y) := by ring
 
 -- Exercise 3.2.9.8
 example : ∃ n : ℕ, 0 < n ∧ 9 ∣ 2 ^ n - 1 := by
-  sorry
+  use 6 -- ⊢ 0 < 6 ∧ 9 ∣ 2 ^ 6 - 1
+  constructor
+  -- ⊢ 0 < 6
+  . numbers
+  -- ⊢ 9 ∣ 2 ^ 6 - 1
+  . use 7
+    numbers
 
 -- Exercise 3.2.9.9
 example : ∃ a b : ℤ, 0 < b ∧ b < a ∧ a - b ∣ a + b := by
