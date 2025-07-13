@@ -139,6 +139,8 @@ theorem Int.ModEq.refl (a : ℤ) : a ≡ a [ZMOD n] := by
 
 /-!
   ### 3.3.11. Example
+
+  We could solve this by working directly from the definition, which is rather painful.
 -/
 example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
     a * b ^ 2 + a ^ 2 * b + 3 * a ≡ 2 * b ^ 2 + 2 ^ 2 * b + 3 * 2 [ZMOD 4] := by
@@ -151,21 +153,34 @@ example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
     _ = 4 * x * (b ^ 2 + a * b + 2 * b + 3) := by rw [hx]
     _ = 4 * (x * (b ^ 2 + a * b + 2 * b + 3)) := by ring
 
-
+/-!
+  Or, better, we can solve this by applying the right combination of the lemmas we already proved, in the right order. This requires much less thinking.
+-/
 example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
     a * b ^ 2 + a ^ 2 * b + 3 * a ≡ 2 * b ^ 2 + 2 ^ 2 * b + 3 * 2 [ZMOD 4] := by
   apply Int.ModEq.add
-  apply Int.ModEq.add
-  apply Int.ModEq.mul
-  apply ha
-  apply Int.ModEq.refl
-  apply Int.ModEq.mul
-  apply Int.ModEq.pow
-  apply ha
-  apply Int.ModEq.refl
-  apply Int.ModEq.mul
-  apply Int.ModEq.refl
-  apply ha
+  --  ⊢ a * b ^ 2 + a ^ 2 * b ≡ 2 * b ^ 2 + 2 ^ 2 * b [ZMOD 4]
+  . apply Int.ModEq.add
+    -- ⊢ a * b ^ 2 ≡ 2 * b ^ 2 [ZMOD 4]
+    . apply Int.ModEq.mul
+      -- ⊢ a ≡ 2 [ZMOD 4]
+      . apply ha
+      -- ⊢ b ^ 2 ≡ b ^ 2 [ZMOD 4]
+      . apply Int.ModEq.refl
+    -- ⊢ a ^ 2 * b ≡ 2 ^ 2 * b [ZMOD 4]
+    . apply Int.ModEq.mul
+      -- ⊢ a ^ 2 ≡ 2 ^ 2 [ZMOD 4]
+      . apply Int.ModEq.pow
+        -- ⊢ a ≡ 2 [ZMOD 4]
+        apply ha
+      -- ⊢ b ≡ b [ZMOD 4]
+      . apply Int.ModEq.refl
+  -- ⊢ 3 * a ≡ 3 * 2 [ZMOD 4]
+  . apply Int.ModEq.mul
+    -- ⊢ 3 ≡ 3 [ZMOD 4]
+    . apply Int.ModEq.refl
+    -- ⊢ a ≡ 2 [ZMOD 4]
+    . apply ha
 
 /-! 3.3.12. Exercises -/
 
