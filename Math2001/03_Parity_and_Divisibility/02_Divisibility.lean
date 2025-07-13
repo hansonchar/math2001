@@ -59,7 +59,7 @@ example {x y z : ℕ} (h : x * y ∣ z) : x ∣ z := by
   You might wonder how to show that a number is not divisible by another number. A convenient test here is a theorem which we will prove later in the book, in Example 4.5.8: if an integer $a$ is strictly between two consecutive multiples of an integer $b$, then it is not a multiple of $b$. More formally, if there exists an integer $q$ such that $bq < a < b(q+1)$, then $a$ is not a multiple of $b$. Here is an example applying this test:
 -/
 example : ¬(5 : ℤ) ∣ 12 := by
-  apply Int.not_dvd_of_exists_lt_and_lt
+  apply Int.not_dvd_of_exists_lt_and_lt  -- Criterion for an integer not to divide another.
   use 2
   constructor
   · numbers -- show `5 * 2 < 12`
@@ -96,27 +96,54 @@ example {a b : ℕ} (hab : a ∣ b) (hb : 0 < b) : 0 < a := by
 
 -- Exercise 3.2.9.1
 example (t : ℤ) : t ∣ 0 := by
-  sorry
+  use 0 -- ⊢ 0 = t * 0
+  ring  -- Interesting we can just say `ring` in lieu of the more verbose form below.
+  -- calc
+  --    0 = t * 0 := by ring
 
 -- Exercise 3.2.9.2
 example : ¬(3 : ℤ) ∣ -10 := by
-  sorry
+  apply Int.not_dvd_of_exists_lt_and_lt -- Criterion for an integer not to divide another.
+  use -4  -- ⊢ 3 * -4 < -10 ∧ -10 < 3 * (-4 + 1)
+  constructor
+  -- ⊢ 3 * -4 < -10
+  . numbers
+  -- ⊢ -10 < 3 * (-4 + 1)
+  . numbers
 
 -- Exercise 3.2.9.3
 example {x y : ℤ} (h : x ∣ y) : x ∣ 3 * y - 4 * y ^ 2 := by
-  sorry
+  obtain ⟨k, hk⟩ := h
+  use 3 * k - 4 * x * k ^ 2 -- Trick: add this `use` statement as the last step after finishing the `calc`
+  calc
+    3 * y - 4 * y ^ 2 = 3 * (x * k) - 4 * (x * k)^2 := by rw [hk]
+    _ = x * (3 * k - 4 * x * k ^ 2) := by ring
 
 -- Exercise 3.2.9.4
 example {m n : ℤ} (h : m ∣ n) : m ∣ 2 * n ^ 3 + n := by
-  sorry
+  obtain ⟨k, hk⟩ := h
+  use 2 * m ^ 2 * k ^ 3 + k
+  calc
+    2 * n ^ 3 + n = 2 * (m * k) ^ 3 + (m * k) := by rw [hk]
+    _ = m * (2 * m ^ 2 * k ^ 3 + k) := by ring
 
 -- Exercise 3.2.9.5
 example {a b : ℤ} (hab : a ∣ b) : a ∣ 2 * b ^ 3 - b ^ 2 + 3 * b := by
-  sorry
+  obtain ⟨c, hc⟩ := hab
+  use 2 * a ^ 2 * c ^ 3 - a * c ^ 2 + 3 * c
+  calc
+    2 * b ^ 3 - b ^ 2 + 3 * b = 2 * (a * c) ^ 3 - (a * c) ^ 2 + 3 * (a * c) := by rw [hc]
+    _ = a * (2 * a ^ 2 * c ^ 3 - a * c ^ 2 + 3 * c) := by ring
 
 -- Exercise 3.2.9.6
 example {k l m : ℤ} (h1 : k ∣ l) (h2 : l ^ 3 ∣ m) : k ^ 3 ∣ m := by
-  sorry
+  obtain ⟨x, hx⟩ := h1
+  obtain ⟨y, hy⟩ := h2
+  use x ^ 3 * y
+  calc
+    m = l ^ 3 * y := hy
+    _ = (k * x) ^ 3 * y := by rw [hx]
+    _ = k ^ 3 * (x ^ 3 * y) := by ring
 
 -- Exercise 3.2.9.7
 example {p q r : ℤ} (hpq : p ^ 3 ∣ q) (hqr : q ^ 2 ∣ r) : p ^ 6 ∣ r := by
