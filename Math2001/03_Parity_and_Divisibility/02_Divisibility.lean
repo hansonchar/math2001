@@ -70,11 +70,12 @@ example : ¬(5 : ℤ) ∣ 12 := by
 -/
 example {a b : ℕ} (hb : 0 < b) (hab : a ∣ b) : a ≤ b := by
   obtain ⟨k, hk⟩ := hab
-  have H1 :=
+  -- Interesting that H1 is constructed directly without stating what it is up front.
+  have H1 :=      -- H1 : 0 < a * k
     calc
       0 < b := hb
       _ = a * k := hk
-  cancel a at H1
+  cancel a at H1  -- H1 : 0 < k
   have H : 1 ≤ k := H1
   calc
     a = a * 1 := by ring
@@ -85,7 +86,11 @@ example {a b : ℕ} (hb : 0 < b) (hab : a ∣ b) : a ≤ b := by
   ### 3.2.8. Example
 -/
 example {a b : ℕ} (hab : a ∣ b) (hb : 0 < b) : 0 < a := by
-  sorry
+  obtain ⟨c, hc⟩ := hab
+  have H := calc
+    0 < b := hb
+    _ = a * c := hc
+  cancel c at H
 
 /-! ### 3.2.9 Exercises -/
 
