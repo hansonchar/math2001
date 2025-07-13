@@ -10,6 +10,8 @@ math2001_init
 
 /-!
   ### 3.4.1. Example
+
+  It’s easy to write a Lean tactic which checks the correctness of a class of statement. The author has done exactly this, updating tactic `rel` to cover this kind of statement. We won’t discuss tactic-writing in this book, but effectively, the tactic now throws the lemmas `Int.ModEq.add`, `Int.ModEq.neg`, `Int.ModEq.sub`, `Int.ModEq.mul`, `Int.ModEq.pow`, `Int.ModEq.refl` and the provided hypotheses at the statement until (a) the goal is solved or (b) none of these lemmas apply any more. And that’s exactly what we’re doing in our heads when we check the paper statement of the problem.
 -/
 example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
     a * b ^ 2 + a ^ 2 * b + 3 * a ≡ 2 * b ^ 2 + 2 ^ 2 * b + 3 * 2 [ZMOD 4] := by
@@ -17,13 +19,18 @@ example {a b : ℤ} (ha : a ≡ 2 [ZMOD 4]) :
 
 /-!
   ### 3.4.2. Example
+
+  From now on, we will solve more interesting modular arithmetic problems, dealing with steps like Example 3.3.11 in a single line.
 -/
 example {a b : ℤ} (ha : a ≡ 4 [ZMOD 5]) (hb : b ≡ 3 [ZMOD 5]) :
     a * b + b ^ 3 + 3 ≡ 2 [ZMOD 5] :=
   calc
+    -- Notice the use of `≡` here.
     a * b + b ^ 3 + 3 ≡ 4 * b + b ^ 3 + 3 [ZMOD 5] := by rel [ha]
     _ ≡ 4 * 3 + 3 ^ 3 + 3 [ZMOD 5] := by rel [hb]
+    -- Notice the use of `=` here.
     _ = 2 + 5 * 8 := by numbers
+    -- Interesting use of `by extra`.
     _ ≡ 2 [ZMOD 5] := by extra
 
 /-!
