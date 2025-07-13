@@ -167,4 +167,12 @@ example : ∃ n : ℕ, 0 < n ∧ 9 ∣ 2 ^ n - 1 := by
 
 -- Exercise 3.2.9.9
 example : ∃ a b : ℤ, 0 < b ∧ b < a ∧ a - b ∣ a + b := by
-  sorry
+  use 2, 1    -- ⊢ 0 < 1 ∧ 1 < 2 ∧ 2 - 1 ∣ 2 + 1
+  constructor -- ⊢ 0 < 1
+  . numbers
+  constructor -- ⊢ 1 < 2
+  . numbers
+          -- ⊢ 2 - 1 ∣ 2 + 1
+  . use 3 -- ⊢ 2 + 1 = (2 - 1) * 3
+    calc
+      2 + 1 = (2 - 1) * 3 := by numbers
