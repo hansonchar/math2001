@@ -33,7 +33,12 @@ example {n : ℤ} (hn : 8 ∣ 5 * n) : 8 ∣ n := by
   ### 3.5.2. Example
 -/
 example {n : ℤ} (h1 : 5 ∣ 3 * n) : 5 ∣ n := by
-  sorry
+  obtain ⟨x, hx⟩ := h1
+  use 2 * x - n
+  calc
+    n = 2 * (3 * n) - 5 * n := by ring
+    _ = 2 * (5 * x) - 5 * n := by rw [hx]
+    _ = 5 * (2 * x - n) := by ring
 
 /-!
   ### 3.5.3. Example
