@@ -109,7 +109,17 @@ example : ∃ k : ℤ, 5 * k ≡ 6 [ZMOD 8] := by
 
 -- Exercise 3.4.5.6
 example (n : ℤ) : 5 * n ^ 2 + 3 * n + 7 ≡ 1 [ZMOD 2] := by
-  sorry
+  mod_cases hn : n % 2
+  -- hn : n ≡ 0 [ZMOD 2]
+  . calc
+      5 * n ^ 2 + 3 * n + 7 ≡ 5 * 0 ^ 2 + 3 * 0 + 7 [ZMOD 2] := by rel [hn]
+      _ = 1 + 2 * 3 := by numbers
+      _ ≡ 1 [ZMOD 2] := by extra
+  -- hn : n ≡ 1 [ZMOD 2]
+  . calc
+      5 * n ^ 2 + 3 * n + 7 ≡ 5 * 1 ^ 2 + 3 * 1 + 7 [ZMOD 2] := by rel [hn]
+      _ = 1 + 2 * 7 := by numbers
+      _ ≡ 1 [ZMOD 2] := by extra
 
 -- Exercise 3.4.5.7
 example {x : ℤ} : x ^ 5 ≡ x [ZMOD 5] := by
