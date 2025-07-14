@@ -76,7 +76,18 @@ example {a : ℤ} (ha : 7 ∣ 5 * a) : 7 ∣ a := by
 
 -- Exercise 3.5.4.3.
 example {n : ℤ} (h1 : 7 ∣ n) (h2 : 9 ∣ n) : 63 ∣ n := by
-  sorry
+  obtain ⟨a, ha⟩ := h1
+  obtain ⟨b, hb⟩ := h2
+  use 4 * b - 3 * a
+  calc
+    -- We want two terms of $n$ that differ by one.
+    -- One has a factor being the multiple of 7, and the other a multiple of 9.
+    -- (Note that 7 and 9 are read off from `ha` and `hb`.)
+    -- This allows us to expand both terms into a multiple of 63 when replaced with `a` and `b`.
+    n = 28 * n - 27 * n := by ring
+    _ = 28 * (9 * b) - 27 * n := by rw [hb]
+    _ = 28 * (9 * b) - 27 * (7 * a) := by rw [ha]
+    _ = 63 * (4 * b - 3 * a) := by ring
 
 -- Exercise 3.5.4.4.
 example {n : ℤ} (h1 : 5 ∣ n) (h2 : 13 ∣ n) : 65 ∣ n := by
