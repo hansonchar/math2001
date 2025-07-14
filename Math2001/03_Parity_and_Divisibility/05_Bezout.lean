@@ -57,7 +57,13 @@ example {m : ℤ} (h1 : 8 ∣ m) (h2 : 5 ∣ m) : 40 ∣ m := by
 
 -- Exercise 3.5.4.1.
 example {n : ℤ} (hn : 6 ∣ 11 * n) : 6 ∣ n := by
-  sorry
+  obtain ⟨a, ha⟩ := hn
+  use 2 * n - a
+  calc
+    -- We want to have some `(11 * n)` and the other term divisible by 6.
+    n = 12 * n - (11 * n) := by ring
+    _ = 12 * n - 6 * a := by rw [ha]
+    _ = 6 * (2 * n - a) := by ring
 
 -- Exercise 3.5.4.2.
 example {a : ℤ} (ha : 7 ∣ 5 * a) : 7 ∣ a := by
