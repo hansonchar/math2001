@@ -88,8 +88,10 @@ example {a : ℤ} (ha : a ≡ 3 [ZMOD 4]) : a ^ 3 + 4 * a ^ 2 + 2 ≡ 1 [ZMOD 4]
     _ ≡ 1 [ZMOD 4] := by extra
 
 -- Exercise 3.4.5.3
-example (a b : ℤ) : (a + b) ^ 3 ≡ a ^ 3 + b ^ 3 [ZMOD 3] :=
-  sorry
+example (a b : ℤ) : (a + b) ^ 3 ≡ a ^ 3 + b ^ 3 [ZMOD 3] := by
+  use a * b * (a + b)
+  calc
+      (a + b) ^ 3 - (a ^ 3 + b ^ 3) = 3 * (a * b * (a + b)) := by ring
 
 -- Exercise 3.4.5.4
 example : ∃ a : ℤ, 4 * a ≡ 1 [ZMOD 7] := by
