@@ -91,4 +91,11 @@ example {n : ℤ} (h1 : 7 ∣ n) (h2 : 9 ∣ n) : 63 ∣ n := by
 
 -- Exercise 3.5.4.4.
 example {n : ℤ} (h1 : 5 ∣ n) (h2 : 13 ∣ n) : 65 ∣ n := by
-  sorry
+  obtain ⟨a, ha⟩ := h1
+  obtain ⟨b, hb⟩ := h2
+  use 2 * a - 5 * b
+  calc
+    n = 26 * n - 25 * n := by ring
+    _ = 26 * (5 * a) - 25 * n := by rw [ha]
+    _ = 26 * (5 * a) - 25 * (13 * b) := by rw [hb]
+    _ = 65 * (2 * a - 5 * b) := by ring
