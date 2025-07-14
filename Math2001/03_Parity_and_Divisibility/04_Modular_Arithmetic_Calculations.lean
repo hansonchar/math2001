@@ -121,6 +121,34 @@ example (n : ℤ) : 5 * n ^ 2 + 3 * n + 7 ≡ 1 [ZMOD 2] := by
       _ = 1 + 2 * 7 := by numbers
       _ ≡ 1 [ZMOD 2] := by extra
 
--- Exercise 3.4.5.7
+-- Exercise 3.4.5.7.  Simple, but nice!
 example {x : ℤ} : x ^ 5 ≡ x [ZMOD 5] := by
-  sorry
+  mod_cases hx : x % 5
+  -- hx : x ≡ 0 [ZMOD 5]
+  . calc
+      x ^ 5 ≡ 0 ^ 5 [ZMOD 5] := by rel [hx]
+      _ = 0 := by numbers
+      _ ≡ x [ZMOD 5] := by rel [hx]
+  -- hx : x ≡ 1 [ZMOD 5]
+  . calc
+      x ^ 5 ≡ 1 ^ 5 [ZMOD 5] := by rel [hx]
+      _ = 1 := by numbers
+      _ ≡ x [ZMOD 5] := by rel [hx]
+  -- hx : x ≡ 2 [ZMOD 5]
+  . calc
+      x ^ 5 ≡ 2 ^ 5 [ZMOD 5] := by rel [hx]
+      _ = 2 + 5 * 6 := by numbers
+      _ ≡ 2 [ZMOD 5] := by extra
+      _ ≡ x [ZMOD 5] := by rel [hx]
+  -- hx : x ≡ 3 [ZMOD 5]
+  . calc
+      x ^ 5 ≡ 3 ^ 5 [ZMOD 5] := by rel [hx]
+      _ = 3 + 5 * 48 := by numbers
+      _ ≡ 3 [ZMOD 5] := by extra
+      _ ≡ x [ZMOD 5] := by rel [hx]
+  -- hx : x ≡ 4 [ZMOD 5]
+  . calc
+      x ^ 5 ≡ 4 ^ 5 [ZMOD 5] := by rel [hx]
+      _ = 4 + 5 * 204 := by numbers
+      _ ≡ 4 [ZMOD 5] := by extra
+      _ ≡ x [ZMOD 5] := by rel [hx]
