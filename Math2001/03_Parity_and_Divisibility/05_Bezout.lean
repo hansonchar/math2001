@@ -18,9 +18,16 @@ example {n : ℤ} (hn : 8 ∣ 5 * n) : 8 ∣ n := by
     _ = -3 * (8 * a) + 16 * n := by rw [ha]
     _ = 8 * (-3 * a + 2 * n) := by ring
 
-
+/-!
+  Such a problem will typically have many possible solutions. Here is another solution.
+-/
 example {n : ℤ} (hn : 8 ∣ 5 * n) : 8 ∣ n := by
-  sorry
+  obtain ⟨a, ha⟩ := hn
+  use 5 * a - 3 * n
+  calc
+    n = 5 * (5 * n) - 24 * n := by ring
+    _ = 5 * (8 * a) - 24 * n := by rw [ha]
+    _ = 8 * (5 * a - 3 * n) := by ring
 
 /-!
   ### 3.5.2. Example
