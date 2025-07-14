@@ -95,7 +95,10 @@ example (a b : ℤ) : (a + b) ^ 3 ≡ a ^ 3 + b ^ 3 [ZMOD 3] := by
 
 -- Exercise 3.4.5.4
 example : ∃ a : ℤ, 4 * a ≡ 1 [ZMOD 7] := by
-  sorry
+  use 2
+  calc
+    4 * 2 = 1 + 7 * 1 := by ring
+    _ ≡ 1 [ZMOD 7] := by extra
 
 -- Exercise 3.4.5.5
 example : ∃ k : ℤ, 5 * k ≡ 6 [ZMOD 8] := by
