@@ -67,7 +67,12 @@ example {n : ℤ} (hn : 6 ∣ 11 * n) : 6 ∣ n := by
 
 -- Exercise 3.5.4.2.
 example {a : ℤ} (ha : 7 ∣ 5 * a) : 7 ∣ a := by
-  sorry
+  obtain ⟨x, hx⟩ := ha
+  use 3 * x - 2 * a
+  calc
+    a = 3 * (5 * a) - 14 * a := by ring
+    _ = 3 * (7 * x) - 14 * a := by rw [hx]
+    _ = 7 * (3 * x - 2 * a) := by ring
 
 -- Exercise 3.5.4.3.
 example {n : ℤ} (h1 : 7 ∣ n) (h2 : 9 ∣ n) : 63 ∣ n := by
