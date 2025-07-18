@@ -37,9 +37,28 @@ example {n : ℕ} (hn : ∀ m, n ∣ m) : n = 1 := by
 
 /-!
   ### 4.1.3. Example
+
+  Let $a$ and $b$ be real numbers and suppose that every real number $x$ is either at least $a$ or at most $b$. Show that $a ≤ b$.
 -/
 example {a b : ℝ} (h : ∀ x, x ≥ a ∨ x ≤ b) : a ≤ b := by
-  sorry
+  -- A clever selection of (a + b) / 2!
+  have H : (a + b) / 2 ≥ a ∨ (a + b) / 2 ≤ b := by apply h
+  obtain h1 | h1 := H
+  -- h1: (a + b) / 2 ≥ a
+  -- |- a ≤ b
+  -- Remark: the solution opens up by simply considering `b` on the lhs instead of `a`!
+  . have hb : b ≥ a := by
+      calc
+        b = (a + b) / 2 * 2 - a := by ring
+        _ ≥ a * 2 - a := by rel [h1]
+        _ = a := by ring
+    apply hb
+  -- h1: (a + b) / 2 ≤ b
+  -- |- a ≤ b
+  . calc
+      a = (a + b) / 2 * 2 - b := by ring
+      _ ≤ b * 2 - b := by rel [h1]
+      _ = b := by ring
 
 /-!
   ### 4.1.4. Example
