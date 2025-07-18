@@ -12,6 +12,11 @@ math2001_init
   ## 4.1. “For all” and implication
 
   ### 4.1.1. Example
+
+  Let $a$ be a real number and suppose that for all real numbers, it is true that $a ≤ x^2-2x$.
+  Show that $a ≤ -1$.
+
+  To use a hypothesis with a universal quantifier, you may want to "specialize" its use to one particular variable. For example, in the solution below, we use the special case of the hypothesis in which $x$ is set to $1$.
 -/
 example {a : ℝ} (h : ∀ x, a ≤ x ^ 2 - 2 * x) : a ≤ -1 :=
   calc
@@ -20,6 +25,8 @@ example {a : ℝ} (h : ∀ x, a ≤ x ^ 2 - 2 * x) : a ≤ -1 :=
 
 /-!
   ### 4.1.2. Example
+
+  Let $n$ be a natural number which is a factor of every natural number $m$. Show that $n=1$.
 -/
 example {n : ℕ} (hn : ∀ m, n ∣ m) : n = 1 := by
   have h1 : n ∣ 1 := by apply hn

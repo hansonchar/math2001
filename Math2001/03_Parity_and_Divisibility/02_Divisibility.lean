@@ -67,6 +67,10 @@ example : ¬(5 : ℤ) ∣ 12 := by
 
 /-!
   ### 3.2.7. Example
+
+  Let $a$ and $b$ be natural numbers, with $b$ positive, and suppose that $a$ divides $b$. Show that $a ≤ b$.
+
+  This lemma is available in the main Lean library under the name `Nat.le_of_dvd`.
 -/
 example {a b : ℕ} (hb : 0 < b) (hab : a ∣ b) : a ≤ b := by
   obtain ⟨k, hk⟩ := hab
@@ -84,6 +88,10 @@ example {a b : ℕ} (hb : 0 < b) (hab : a ∣ b) : a ≤ b := by
 
 /-!
   ### 3.2.8. Example
+
+  Let $a$ and $b$ be natural numbers, with $b$ positive, and suppose that $a$ divides $b$. Show that $a$ is positive.
+
+  This lemma is also available in the main Lean library, under the name `Nat.pos_of_dvd_of_pos`.
 -/
 example {a b : ℕ} (hab : a ∣ b) (hb : 0 < b) : 0 < a := by
   obtain ⟨c, hc⟩ := hab
