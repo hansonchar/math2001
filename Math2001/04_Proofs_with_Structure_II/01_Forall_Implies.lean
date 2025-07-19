@@ -97,9 +97,30 @@ example : ∃ b : ℝ, ∀ x : ℝ, b ≤ x ^ 2 - 2 * x := by
 
 /-!
   ### 4.1.6. Example
+
+  Show that there exists a real number $c$ such that for all real numbers $x$ and $y$,
+  if $x^2 + y^2 ≤ 4$, then $x + y ≥ c$.
 -/
 example : ∃ c : ℝ, ∀ x y, x ^ 2 + y ^ 2 ≤ 4 → x + y ≥ c := by
-  sorry
+  use -3  -- We were told -3 works. Otherwise, figuring this out is another story.
+   -- Turn a somewhat complicated goal of implication into simple hypothesis and goals!
+  intro x y h
+  -- To deduce from $(x+y)^2 ≤ 3^2$ that $-3 ≤ x+y ≤ 3$, we need to use the lemma
+  -- `abs_le_of_sq_le_sq'`, previously saw in Example 2.4.2.
+  have hxy : -3 ≤ x + y ∧ x + y ≤ 3 -- conjure up `hxy` but we need to prove it.
+  · apply abs_le_of_sq_le_sq' -- match `-3 ≤ x + y ∧ x + y ≤ 3` and turn into 2 subgoals.
+    -- |- (x + y) ^ 2 ≤ 3 ^ 2
+    . calc
+      (x + y) ^ 2 ≤ (x + y) ^ 2 + (x - y) ^ 2 := by extra
+      _ = 2 * (x ^ 2 + y ^ 2) := by ring
+      _ ≤ 2 * 4 := by rel [h]
+      _ ≤ 3 ^ 2 := by numbers
+    -- ⊢ 0 ≤ 3
+    . numbers
+  obtain ⟨h1, h2⟩ := hxy
+  -- h1: -3 ≤ x + y
+  -- ⊢ x + y ≥ -3
+  apply h1
 
 /-!
   ### 4.1.7. Example

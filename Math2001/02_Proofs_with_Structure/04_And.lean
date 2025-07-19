@@ -22,6 +22,8 @@ example {x y : ℤ} (h : 2 * x - y = 4 ∧ y - x + 1 = 2) : x = 5 := by
 /-!
   ### 2.4.2. Example
 
+  Let $p$ be a rational number for which $p^2 ≤ 8$. Show that $p ≥ -5$.
+
   Interesting parts:
   1. introduce a new hypothesis
   1. prove via the application (via `apply`) of `abs_le_of_sq_le_sq'`
@@ -31,10 +33,10 @@ example {x y : ℤ} (h : 2 * x - y = 4 ∧ y - x + 1 = 2) : x = 5 := by
 example {p : ℚ} (hp : p ^ 2 ≤ 8) : p ≥ -5 := by
   have hp' : -3 ≤ p ∧ p ≤ 3 -- conjure up `hp'` but we need to prove it.
   · apply abs_le_of_sq_le_sq' -- match `-3 ≤ p ∧ p ≤ 3` and turn into 2 subgoals.
-    calc  -- First subgoal: `p ^ 2 ≤ 3 ^ 2`.
+    . calc  -- First subgoal: `p ^ 2 ≤ 3 ^ 2`.
         p ^ 2 ≤ 9 := by addarith [hp]
         _ = 3 ^ 2 := by numbers
-    numbers -- Second subgoal: `0 ≤ 3`.
+    . numbers -- Second subgoal: `0 ≤ 3`.
   -- At this point, `hp'` has been established.
   obtain ⟨h1, h2⟩ := hp' -- Split `hp'` into:
   -- h1: -3 ≤ p
