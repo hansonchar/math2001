@@ -82,14 +82,18 @@ example {a b : ℝ} (ha1 : a ^ 2 ≤ 2) (hb1 : b ^ 2 ≤ 2) (ha2 : ∀ y, y ^ 2 
 
 /-!
   ### 4.1.5. Example
+
+  Show that there exists a real number $b$ such that for every real number $x$, it is true that $b ≤ x^2 - 2x$.
 -/
 example : ∃ b : ℝ, ∀ x : ℝ, b ≤ x ^ 2 - 2 * x := by
   use -1
-  intro x
+  intro x -- introduces a particular, arbitrary real number `x`, so this changes the goal
+  -- from:  ⊢ ∀ (x : ℝ), -1 ≤ x ^ 2 - 2 * x
+  --   to:  x : ℝ
+  --        ⊢ -1 ≤ x ^ 2 - 2 * x
   calc
     -1 ≤ -1 + (x - 1) ^ 2 := by extra
     _ = x ^ 2 - 2 * x := by ring
-
 
 /-!
   ### 4.1.6. Example
