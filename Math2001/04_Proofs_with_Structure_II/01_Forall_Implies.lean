@@ -46,7 +46,7 @@ example {a b : ℝ} (h : ∀ x, x ≥ a ∨ x ≤ b) : a ≤ b := by
   obtain h1 | h1 := H
   -- h1: (a + b) / 2 ≥ a
   -- |- a ≤ b
-  -- Remark: the solution opens up by simply considering `b` on the lhs instead of `a`!
+  -- The solution opens up by simply considering `b` on the lhs instead of `a`!
   . have hb : b ≥ a := by
       calc
         b = (a + b) / 2 * 2 - a := by ring
@@ -62,14 +62,23 @@ example {a b : ℝ} (h : ∀ x, x ≥ a ∨ x ≤ b) : a ≤ b := by
 
 /-!
   ### 4.1.4. Example
+
+  Let $a$ be real number whose square is at most 2, and which is greater than or equal to any real number whose square is at most 2. Let $b$ be another real number with the same two properties. Prove that $a=b$.
 -/
 example {a b : ℝ} (ha1 : a ^ 2 ≤ 2) (hb1 : b ^ 2 ≤ 2) (ha2 : ∀ y, y ^ 2 ≤ 2 → y ≤ a)
     (hb2 : ∀ y, y ^ 2 ≤ 2 → y ≤ b) :
     a = b := by
-  apply le_antisymm
-  · apply hb2
+  -- Given all the hypothesis involve ≤ or ≥, but the goal involves =,
+  -- it makes sense to split the goal also into ≤ and ≥.
+  apply le_antisymm -- Split = into two cases of ≤ and ≥.
+  -- ⊢ a ≤ b
+  -- This changes the goal to be the antecedent of the implication hb2.
+  · apply hb2 -- ⊢ a ^ 2 ≤ 2
     apply ha1
-  · sorry
+  -- ⊢ b ≤ a
+  -- This changes the goal to be the antecedent of the implication ha2.
+  · apply ha2 -- ⊢ b ^ 2 ≤ 2
+    exact hb1
 
 /-!
   ### 4.1.5. Example
